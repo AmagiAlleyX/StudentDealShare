@@ -3,17 +3,17 @@ server:
 
 spring:
   datasource:
-    # MariaDB配置（默认使用）
-    url: jdbc:mariadb://localhost:3306/campusecohub?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: xiaoxiang
-    driver-class-name: org.mariadb.jdbc.Driver
-    
-    # MySQL配置（如需使用MySQL，请取消下面的注释并注释MariaDB配置）
-#    url: jdbc:mysql://localhost:3306/campusecohub?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    # MariaDB配置（如需使用MariaDB，请取消下面的注释并注释MySQL配置）
+#    url: jdbc:mariadb://localhost:3306/campusecohub?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
 #    username: root
 #    password: xiaoxiang
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    driver-class-name: org.mariadb.jdbc.Driver
+    
+    # MySQL配置（已启用）
+    url: jdbc:mysql://localhost:3306/campusecohub?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: xiaoxiang
+    driver-class-name: com.mysql.cj.jdbc.Driver
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher  # 添加这行！
@@ -25,10 +25,10 @@ mybatis:
     map-underscore-to-camel-case: true
 
 pagehelper:
-  # MariaDB方言（默认使用）
-  helper-dialect: mariadb
-  # MySQL方言（如需使用MySQL，请取消下面的注释并注释MariaDB方言）
-#  helper-dialect: mysql
+  # MariaDB方言（如需使用MariaDB，请取消下面的注释并注释MySQL方言）
+#  helper-dialect: mariadb
+  # MySQL方言（已启用）
+  helper-dialect: mysql
   reasonable: true
   support-methods-arguments: true
   params: count=countSql

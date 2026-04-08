@@ -5,4 +5,6 @@ com\campusecohub\controller\ActivityController.class
 com\campusecohub\controller\SchoolController.class
 com\campusecohub\CampusEcoHubApplication.class
 com\campusecohub\controller\PostController.class
+com\campusecohub\config\GlobalExceptionHandler.class
 com\campusecohub\controller\ReminderController.class
+com\campusecohub\config\CorsConfig.class

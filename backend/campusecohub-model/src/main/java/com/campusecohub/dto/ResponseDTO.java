@@ -56,4 +56,11 @@ public class ResponseDTO<T> {
     public static <T> ResponseDTO<T> fail(String message) {
         return fail(500, message);
     }
+
+    /**
+     * 失败响应（默认错误码）- 别名方法，兼容GlobalExceptionHandler
+     */
+    public static <T> ResponseDTO<T> error(String message) {
+        return fail(500, message);
+    }
 }

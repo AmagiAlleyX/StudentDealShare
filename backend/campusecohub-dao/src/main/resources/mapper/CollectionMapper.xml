@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusecohub.mapper.CollectionMapper">
+    <!-- 根据ID查询收藏 -->
+    <select id="selectById" resultType="com.campusecohub.entity.Collection">
+        SELECT * FROM collection WHERE id = #{id}
+    </select>
+
+    <!-- 根据用户ID和活动ID查询收藏 -->
+    <select id="selectByUserIdAndActivityId" resultType="com.campusecohub.entity.Collection">
+        SELECT * FROM collection WHERE user_id = #{userId} AND activity_id = #{activityId}
+    </select>
+
+    <!-- 根据用户ID查询收藏 -->
+    <select id="selectByUserId" resultType="com.campusecohub.entity.Collection">
+        SELECT * FROM collection WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <!-- 插入收藏 -->
+    <insert id="insert" parameterType="com.campusecohub.entity.Collection" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO collection (user_id, activity_id, create_time, update_time)
+        VALUES (#{userId}, #{activityId}, NOW(), NOW())
+    </insert>
+
+    <!-- 删除收藏 -->
+    <delete id="delete">
+        DELETE FROM collection WHERE id = #{id}
+    </delete>
+
+    <!-- 根据用户ID和活动ID删除收藏 -->
+    <delete id="deleteByUserIdAndActivityId">
+        DELETE FROM collection WHERE user_id = #{userId} AND activity_id = #{activityId}
+    </delete>
+
+    <!-- 根据用户ID删除收藏 -->
+    <delete id="deleteByUserId">
+        DELETE FROM collection WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 根据活动ID删除收藏 -->
+    <delete id="deleteByActivityId">
+        DELETE FROM collection WHERE activity_id = #{activityId}
+    </delete>
+</mapper>

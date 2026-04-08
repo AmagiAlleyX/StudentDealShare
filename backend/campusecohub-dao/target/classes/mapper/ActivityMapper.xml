@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusecohub.mapper.ActivityMapper">
+    <!-- 根据ID查询活动 -->
+    <select id="selectById" resultType="com.campusecohub.entity.Activity">
+        SELECT * FROM activity WHERE id = #{id}
+    </select>
+
+    <!-- 查询所有活动 -->
+    <select id="selectAll" resultType="com.campusecohub.entity.Activity">
+        SELECT * FROM activity ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据条件查询活动 -->
+    <select id="selectByCondition" parameterType="java.util.Map" resultType="com.campusecohub.entity.Activity">
+        SELECT * FROM activity
+        <where>
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="source != null and source != ''">
+                AND source = #{source}
+            </if>
+            <if test="schoolId != null">
+                AND school_id = #{schoolId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="isStudentExclusive != null">
+                AND is_student_exclusive = #{isStudentExclusive}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 插入活动 -->
+    <insert id="insert" parameterType="com.campusecohub.entity.Activity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO activity (title, description, category, source, start_time, end_time, participate_way, link, is_student_exclusive, school_id, create_time, update_time)
+        VALUES (#{title}, #{description}, #{category}, #{source}, #{startTime}, #{endTime}, #{participateWay}, #{link}, #{isStudentExclusive}, #{schoolId}, NOW(), NOW())
+    </insert>
+
+    <!-- 更新活动 -->
+    <update id="update" parameterType="com.campusecohub.entity.Activity">
+        UPDATE activity
+        SET title = #{title}, description = #{description}, category = #{category}, source = #{source},
+            start_time = #{startTime}, end_time = #{endTime}, participate_way = #{participateWay},
+            link = #{link}, is_student_exclusive = #{isStudentExclusive}, school_id = #{schoolId}, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除活动 -->
+    <delete id="delete">
+        DELETE FROM activity WHERE id = #{id}
+    </delete>
+
+    <!-- 根据分类查询活动 -->
+    <select id="selectByCategory" resultType="com.campusecohub.entity.Activity">
+        SELECT * FROM activity WHERE category = #{category} ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据来源查询活动 -->
+    <select id="selectBySource" resultType="com.campusecohub.entity.Activity">
+        SELECT * FROM activity WHERE source = #{source} ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据学校ID查询活动 -->
+    <select id="selectBySchoolId" resultType="com.campusecohub.entity.Activity">
+        SELECT * FROM activity WHERE school_id = #{schoolId} ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询学生专属活动 -->
+    <select id="selectStudentExclusive" resultType="com.campusecohub.entity.Activity">
+        SELECT * FROM activity WHERE is_student_exclusive = 1 ORDER BY create_time DESC
+    </select>
+</mapper>

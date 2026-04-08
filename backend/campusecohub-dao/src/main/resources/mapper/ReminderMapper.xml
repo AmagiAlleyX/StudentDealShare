@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.campusecohub.mapper.ReminderMapper">
+
+    <select id="selectById" resultType="com.campusecohub.entity.Reminder">
+        SELECT * FROM reminder WHERE id = #{id}
+    </select>
+
+    <select id="selectByUserId" resultType="com.campusecohub.entity.Reminder">
+        SELECT * FROM reminder WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectUnsentReminders" resultType="com.campusecohub.entity.Reminder">
+        SELECT * FROM reminder WHERE status = 0 AND reminder_time &lt;= #{now}
+    </select>
+
+<!--    <insert id="insert" parameterType="com.campusecohub.entity.Reminder">-->
+<!--        INSERT INTO reminder (user_id, activity_id, reminder_time, status, create_time, update_time)-->
+<!--        VALUES (#{userId}, #{activityId}, #{reminderTime}, #{status}, #{createTime}, #{updateTime})-->
+<!--    </insert>-->
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM reminder WHERE id = #{id}
+    </delete>
+
+    <update id="updateStatus" parameterType="map">
+        UPDATE reminder SET status = #{status} WHERE id = #{id}
+    </update>
+
+</mapper>

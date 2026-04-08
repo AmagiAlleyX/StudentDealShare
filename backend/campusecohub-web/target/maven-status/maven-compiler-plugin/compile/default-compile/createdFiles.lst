@@ -1,0 +1,8 @@
+com\campusecohub\config\SwaggerConfig.class
+com\campusecohub\controller\UserController.class
+com\campusecohub\config\TaskConfig.class
+com\campusecohub\controller\ActivityController.class
+com\campusecohub\controller\SchoolController.class
+com\campusecohub\CampusEcoHubApplication.class
+com\campusecohub\controller\PostController.class
+com\campusecohub\controller\ReminderController.class

@@ -1,0 +1,8 @@
+com\campusecohub\mapper\PostMapper.class
+com\campusecohub\mapper\CollectionMapper.class
+com\campusecohub\mapper\SchoolMapper.class
+com\campusecohub\mapper\ReminderMapper.class
+com\campusecohub\mapper\LikeMapper.class
+com\campusecohub\mapper\CommentMapper.class
+com\campusecohub\mapper\ActivityMapper.class
+com\campusecohub\mapper\UserMapper.class

@@ -1,0 +1,34 @@
+package com.student.dealshare.converter;
+
+import com.student.dealshare.model.dto.DealCreateDTO;
+import com.student.dealshare.model.dto.DealUpdateDTO;
+import com.student.dealshare.model.entity.Deal;
+import com.student.dealshare.model.vo.DealVO;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.factory.Mappers;
+
+@Mapper
+public interface DealConverter {
+
+    DealConverter INSTANCE = Mappers.getMapper(DealConverter.class);
+
+    DealCreateDTO toCreateDTO(Deal deal);
+
+    Deal toEntity(DealCreateDTO dto);
+
+    DealUpdateDTO toUpdateDTO(Deal deal);
+
+    DealVO toVO(Deal deal);
+
+    @Mapping(target = "dealId", ignore = true)
+    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "createTime", ignore = true)
+    @Mapping(target = "updateTime", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "viewCount", ignore = true)
+    @Mapping(target = "favoriteCount", ignore = true)
+    @Mapping(target = "shareCount", ignore = true)
+    void updateDealFromDTO(DealUpdateDTO dto, @MappingTarget Deal deal);
+}

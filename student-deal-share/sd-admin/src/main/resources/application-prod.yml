@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/student_deal_share?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:dealshare}
+    password: ${DB_PASSWORD:YourPassword123!}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+  
+  druid:
+    initial-size: 10
+    min-idle: 10
+    max-active: 50
+    max-wait: 60000
+    time-between-eviction-runs-millis: 60000
+    min-evictable-idle-time-millis: 300000
+    validation-query: SELECT 1
+    test-while-idle: true
+    test-on-borrow: false
+    test-on-return: false
+    pool-prepared-statements: true
+    max-pool-prepared-statement-per-connection-size: 50
+
+# 生产环境日志配置
+logging:
+  level:
+    root: INFO
+    com.student.dealshare: INFO
+  file:
+    name: /var/log/student-deal-share/app.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30

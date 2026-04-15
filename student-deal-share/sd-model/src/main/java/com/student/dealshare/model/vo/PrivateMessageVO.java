@@ -6,6 +6,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * 私信视图对象
+ */
 @Data
 public class PrivateMessageVO implements Serializable {
 
@@ -16,15 +19,7 @@ public class PrivateMessageVO implements Serializable {
 
     private Long senderId;
 
-    private String senderName;
-
-    private String senderAvatar;
-
     private Long receiverId;
-
-    private String receiverName;
-
-    private String receiverAvatar;
 
     private String content;
 

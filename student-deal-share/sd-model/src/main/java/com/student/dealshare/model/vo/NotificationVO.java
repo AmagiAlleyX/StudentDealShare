@@ -6,6 +6,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * 通知视图对象
+ */
 @Data
 public class NotificationVO implements Serializable {
 
@@ -17,8 +20,6 @@ public class NotificationVO implements Serializable {
     private Long userId;
 
     private Integer type;
-
-    private String typeName;
 
     private String title;
 

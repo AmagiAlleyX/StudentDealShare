@@ -8,22 +8,21 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * 评论对象转换器
+ */
 @Mapper
 public interface CommentConverter {
 
     CommentConverter INSTANCE = Mappers.getMapper(CommentConverter.class);
 
-    CommentCreateDTO toCreateDTO(Comment comment);
-
+    /**
+     * DTO 转 Entity
+     */
     Comment toEntity(CommentCreateDTO dto);
 
+    /**
+     * Entity 转 VO
+     */
     CommentVO toVO(Comment comment);
-
-    @Mapping(target = "commentId", ignore = true)
-    @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "createTime", ignore = true)
-    @Mapping(target = "updateTime", ignore = true)
-    @Mapping(target = "deleted", ignore = true)
-    @Mapping(target = "likeCount", ignore = true)
-    void updateCommentFromDTO(CommentCreateDTO dto, @MappingTarget Comment comment);
 }

@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.student.dealshare.common.exception.BusinessException;
 import com.student.dealshare.common.result.ResultCodeEnum;
 import com.student.dealshare.converter.UserConverter;
+import com.student.dealshare.mapper.UserFollowMapper;
 import com.student.dealshare.mapper.UserMapper;
-import com.student.dealshare.model.dto.PasswordChangeDTO;
 import com.student.dealshare.model.dto.UserLoginDTO;
 import com.student.dealshare.model.dto.UserRegisterDTO;
 import com.student.dealshare.model.dto.UserUpdateDTO;
@@ -18,13 +18,15 @@ import com.student.dealshare.model.vo.UserVO;
 import com.student.dealshare.security.JwtTokenProvider;
 import com.student.dealshare.security.SecurityUtils;
 import com.student.dealshare.service.api.UserService;
-import com.student.dealshare.mapper.UserFollowMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 用户服务实现类
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -54,18 +56,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setStudentVerified(0);
         userMapper.insert(user);
 
-        // 生成 token
-        String token = jwtTokenProvider.createToken(user.getUserId());
-        Long expireTime = jwtTokenProvider.getExpireTime();
+        log.info("用户注册成功，userId: {}", user.getUserId());
 
-        // 返回登录信息
-        LoginVO loginVO = new LoginVO();
-        loginVO.setUserInfo(userConverter.toVO(user));
-        loginVO.setToken(token);
-        loginVO.setExpireTime(expireTime);
-        loginVO.setExpiresIn(expireTime / 1000);
-        
-        return loginVO;
+        // 生成 token
+        return buildLoginVO(user);
     }
 
     @Override
@@ -83,18 +77,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ResultCodeEnum.USER_DISABLED);
         }
 
-        // 生成 token
-        String token = jwtTokenProvider.createToken(user.getUserId());
-        Long expireTime = jwtTokenProvider.getExpireTime();
+        log.info("用户登录成功，userId: {}", user.getUserId());
 
-        // 返回登录信息
-        LoginVO loginVO = new LoginVO();
-        loginVO.setUserInfo(userConverter.toVO(user));
-        loginVO.setToken(token);
-        loginVO.setExpireTime(expireTime);
-        loginVO.setExpiresIn(expireTime / 1000);
-        
-        return loginVO;
+        // 生成 token
+        return buildLoginVO(user);
     }
 
     @Override
@@ -123,31 +109,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         userConverter.updateUserFromDTO(dto, user);
         userMapper.updateById(user);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void changePassword(PasswordChangeDTO dto) {
-        Long userId = SecurityUtils.getCurrentUserId();
-        User user = userMapper.selectById(userId);
-        if (user == null) {
-            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
-        }
-
-        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
-            throw new BusinessException(ResultCodeEnum.INVALID_PASSWORD);
-        }
-
-        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        userMapper.updateById(user);
-    }
-
-    @Override
-    public Page<UserVO> pageUsers(int page, int size) {
-        Page<User> userPage = new Page<>(page, size);
-        Page<User> result = userMapper.selectPage(userPage, null);
         
-        return result.convert(userConverter::toVO);
+        log.info("用户信息更新成功，userId: {}", userId);
     }
 
     @Override
@@ -173,6 +136,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userFollow.setFollowerId(followerId);
         userFollow.setFolloweeId(followeeId);
         userFollowMapper.insert(userFollow);
+        
+        log.info("用户关注成功，followerId: {}, followeeId: {}", followerId, followeeId);
     }
 
     @Override
@@ -184,13 +149,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq(UserFollow::getFollowerId, followerId)
                .eq(UserFollow::getFolloweeId, followeeId);
         userFollowMapper.delete(wrapper);
+        
+        log.info("用户取消关注成功，followerId: {}, followeeId: {}", followerId, followeeId);
     }
 
     @Override
-    public boolean isFollowing(Long userId, Long followeeId) {
+    public boolean isFollowing(Long followerId, Long followeeId) {
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFollow::getFollowerId, userId)
+        wrapper.eq(UserFollow::getFollowerId, followerId)
                .eq(UserFollow::getFolloweeId, followeeId);
         return userFollowMapper.selectCount(wrapper) > 0;
+    }
+
+    /**
+     * 构建登录响应
+     */
+    private LoginVO buildLoginVO(User user) {
+        String token = jwtTokenProvider.createToken(user.getUserId());
+        Long expireTime = jwtTokenProvider.getExpireTime();
+
+        LoginVO loginVO = new LoginVO();
+        loginVO.setUserInfo(userConverter.toVO(user));
+        loginVO.setToken(token);
+        loginVO.setExpireTime(expireTime);
+        loginVO.setExpiresIn(expireTime / 1000);
+        
+        return loginVO;
     }
 }

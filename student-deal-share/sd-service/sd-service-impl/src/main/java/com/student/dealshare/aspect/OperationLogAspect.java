@@ -1,7 +1,8 @@
 package com.student.dealshare.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.student.dealshare.model.entity.OperationLog;
+import com.student.dealshare.annotation.OperationLog;
+
 import com.student.dealshare.service.api.OperationLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
+/**
+ * 操作日志切面
+ */
 @Slf4j
 @Aspect
 @Component

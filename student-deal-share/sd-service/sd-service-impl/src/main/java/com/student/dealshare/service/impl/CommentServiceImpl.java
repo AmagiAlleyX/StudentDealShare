@@ -7,13 +7,12 @@ import com.student.dealshare.common.exception.BusinessException;
 import com.student.dealshare.common.result.ResultCodeEnum;
 import com.student.dealshare.converter.CommentConverter;
 import com.student.dealshare.mapper.CommentMapper;
+import com.student.dealshare.mapper.LikeRecordMapper;
 import com.student.dealshare.model.dto.CommentCreateDTO;
 import com.student.dealshare.model.entity.Comment;
 import com.student.dealshare.model.entity.LikeRecord;
 import com.student.dealshare.model.vo.CommentVO;
-import com.student.dealshare.security.SecurityUtils;
 import com.student.dealshare.service.api.CommentService;
-import com.student.dealshare.mapper.LikeRecordMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 评论服务实现类
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         comment.setStatus(1);
         comment.setLikeCount(0L);
         
+        // 设置评论级别
         if (dto.getParentId() == null || dto.getParentId() == 0) {
             comment.setLevel(1);
         } else {
@@ -50,14 +53,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }
         
         commentMapper.insert(comment);
-
-        if (dto.getPostId() != null) {
-            Comment postComment = commentMapper.selectById(dto.getPostId());
-            if (postComment != null) {
-                postComment.setCommentCount(postComment.getCommentCount() + 1);
-                commentMapper.updateById(postComment);
-            }
-        }
+        log.info("评论发表成功，commentId: {}", comment.getCommentId());
 
         return commentConverter.toVO(comment);
     }
@@ -98,6 +94,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }
         
         commentMapper.deleteById(commentId);
+        log.info("评论删除成功，commentId: {}", commentId);
     }
 
     @Override
@@ -124,6 +121,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Comment comment = commentMapper.selectById(commentId);
         comment.setLikeCount(comment.getLikeCount() + 1);
         commentMapper.updateById(comment);
+        
+        log.info("评论点赞成功，commentId: {}, userId: {}", commentId, userId);
     }
 
     @Override
@@ -142,6 +141,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             comment.setLikeCount(comment.getLikeCount() - 1);
             commentMapper.updateById(comment);
         }
+        
+        log.info("评论取消点赞成功，commentId: {}, userId: {}", commentId, userId);
     }
 
     @Override

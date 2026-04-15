@@ -42,6 +42,9 @@ public class OperationLog implements Serializable {
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime operationTime;
+
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     @TableLogic

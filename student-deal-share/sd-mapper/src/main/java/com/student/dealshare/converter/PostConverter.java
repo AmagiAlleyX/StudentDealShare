@@ -9,19 +9,27 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * 帖子对象转换器
+ */
 @Mapper
 public interface PostConverter {
 
     PostConverter INSTANCE = Mappers.getMapper(PostConverter.class);
 
-    PostCreateDTO toCreateDTO(Post post);
-
+    /**
+     * DTO 转 Entity
+     */
     Post toEntity(PostCreateDTO dto);
 
-    PostUpdateDTO toUpdateDTO(Post post);
-
+    /**
+     * Entity 转 VO
+     */
     PostVO toVO(Post post);
 
+    /**
+     * DTO 更新 Entity
+     */
     @Mapping(target = "postId", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "createTime", ignore = true)

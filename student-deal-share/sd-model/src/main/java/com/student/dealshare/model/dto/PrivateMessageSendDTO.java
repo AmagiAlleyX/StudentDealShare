@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ * 私信发送 DTO
+ */
 @Data
 public class PrivateMessageSendDTO {
 

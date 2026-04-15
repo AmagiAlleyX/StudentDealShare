@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 通知服务实现类
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         notification.setIsRead(0);
         
         notificationMapper.insert(notification);
+        log.info("通知发送成功，userId: {}, type: {}", userId, type);
     }
 
     @Override
@@ -67,6 +71,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         if (notification != null) {
             notification.setIsRead(1);
             notificationMapper.updateById(notification);
+            log.info("通知标记为已读，notificationId: {}", notificationId);
         }
     }
 
@@ -82,6 +87,8 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
             notification.setIsRead(1);
             notificationMapper.updateById(notification);
         }
+        
+        log.info("所有通知标记为已读，userId: {}, count: {}", userId, notifications.size());
     }
 
     @Override
@@ -92,6 +99,9 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         return notificationMapper.selectCount(wrapper);
     }
 
+    /**
+     * 转换为 VO
+     */
     private NotificationVO convertToVO(Notification notification) {
         NotificationVO vo = new NotificationVO();
         vo.setNotificationId(notification.getNotificationId());

@@ -9,19 +9,27 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * 用户对象转换器
+ */
 @Mapper
 public interface UserConverter {
 
     UserConverter INSTANCE = Mappers.getMapper(UserConverter.class);
 
-    UserRegisterDTO toRegisterDTO(User user);
-
+    /**
+     * DTO 转 Entity
+     */
     User toEntity(UserRegisterDTO dto);
 
-    UserUpdateDTO toUpdateDTO(User user);
-
+    /**
+     * Entity 转 VO
+     */
     UserVO toVO(User user);
 
+    /**
+     * DTO 更新 Entity
+     */
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "username", ignore = true)

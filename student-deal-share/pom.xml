@@ -45,6 +45,7 @@
         <lombok.version>1.18.30</lombok.version>
         <knife4j.version>4.3.0</knife4j.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <swagger.version>2.2.15</swagger.version>
         
         <junit.version>5.10.1</junit.version>
         <mockito.version>5.7.0</mockito.version>
@@ -178,6 +179,13 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
+            </dependency>
+
+            <!-- Swagger 注解 -->
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
 
             <!-- MapStruct 对象映射 -->

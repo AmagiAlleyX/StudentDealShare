@@ -9,19 +9,27 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
+/**
+ * 优惠信息对象转换器
+ */
 @Mapper
 public interface DealConverter {
 
     DealConverter INSTANCE = Mappers.getMapper(DealConverter.class);
 
-    DealCreateDTO toCreateDTO(Deal deal);
-
+    /**
+     * DTO 转 Entity
+     */
     Deal toEntity(DealCreateDTO dto);
 
-    DealUpdateDTO toUpdateDTO(Deal deal);
-
+    /**
+     * Entity 转 VO
+     */
     DealVO toVO(Deal deal);
 
+    /**
+     * DTO 更新 Entity
+     */
     @Mapping(target = "dealId", ignore = true)
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "createTime", ignore = true)

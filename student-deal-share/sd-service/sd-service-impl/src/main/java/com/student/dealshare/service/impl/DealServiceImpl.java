@@ -7,6 +7,7 @@ import com.student.dealshare.common.exception.BusinessException;
 import com.student.dealshare.common.result.ResultCodeEnum;
 import com.student.dealshare.converter.DealConverter;
 import com.student.dealshare.mapper.DealMapper;
+import com.student.dealshare.mapper.UserFavoriteMapper;
 import com.student.dealshare.model.dto.DealCreateDTO;
 import com.student.dealshare.model.dto.DealQueryDTO;
 import com.student.dealshare.model.dto.DealUpdateDTO;
@@ -15,7 +16,6 @@ import com.student.dealshare.model.entity.UserFavorite;
 import com.student.dealshare.model.vo.DealVO;
 import com.student.dealshare.security.SecurityUtils;
 import com.student.dealshare.service.api.DealService;
-import com.student.dealshare.mapper.UserFavoriteMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 优惠信息服务实现类
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -45,6 +48,8 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
         deal.setShareCount(0L);
         
         dealMapper.insert(deal);
+        log.info("优惠信息创建成功，dealId: {}", deal.getDealId());
+        
         return dealConverter.toVO(deal);
     }
 
@@ -72,8 +77,8 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
             wrapper.eq(Deal::getActivityType, queryDTO.getActivityType());
         }
         
-        wrapper.eq(Deal::getStatus, 1);
-        wrapper.orderByDesc(Deal::getCreateTime);
+        wrapper.eq(Deal::getStatus, 1)
+               .orderByDesc(Deal::getCreateTime);
         
         Page<Deal> dealPage = dealMapper.selectPage(page, wrapper);
         return dealPage.convert(dealConverter::toVO);
@@ -102,6 +107,7 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
 
         dealConverter.updateDealFromDTO(dto, deal);
         dealMapper.updateById(deal);
+        log.info("优惠信息更新成功，dealId: {}", dto.getDealId());
     }
 
     @Override
@@ -113,6 +119,7 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
         }
         
         dealMapper.deleteById(dealId);
+        log.info("优惠信息删除成功，dealId: {}", dealId);
     }
 
     @Override
@@ -126,6 +133,7 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
         deal.setIsVerified(passed ? 1 : 0);
         deal.setStatus(passed ? 1 : 2);
         dealMapper.updateById(deal);
+        log.info("优惠审核完成，dealId: {}, passed: {}", dealId, passed);
     }
 
     @Override
@@ -152,6 +160,8 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
         Deal deal = dealMapper.selectById(dealId);
         deal.setFavoriteCount(deal.getFavoriteCount() + 1);
         dealMapper.updateById(deal);
+        
+        log.info("优惠收藏成功，dealId: {}, userId: {}", dealId, userId);
     }
 
     @Override
@@ -170,6 +180,8 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
             deal.setFavoriteCount(deal.getFavoriteCount() - 1);
             dealMapper.updateById(deal);
         }
+        
+        log.info("优惠取消收藏成功，dealId: {}, userId: {}", dealId, userId);
     }
 
     @Override

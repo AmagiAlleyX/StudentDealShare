@@ -1,5 +1,6 @@
 package com.student.dealshare.model.dto;
 
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotBlank;

@@ -179,8 +179,41 @@ public enum ResultCodeEnum {
     /**
      * 超过限制
      */
-    EXCEED_LIMIT(5005, "超过限制");
+    EXCEED_LIMIT(5005, "超过限制"),
+    /**
+     * 已点赞
+     */
+    ALREADY_LIKED(5006, "您已经点赞过该内容"),
 
+    /**
+     * 用户名已存在
+     */
+    USERNAME_ALREADY_EXISTS(5007, "用户名已存在，请使用其他用户名"),
+
+    /**
+     * 已收藏
+     */
+    ALREADY_FAVORITED(5008, "您已经收藏过该内容"),
+
+    /**
+     * 凭证无效（用户名或密码错误）
+     */
+    INVALID_CREDENTIALS(5009, "用户名或密码错误"),
+
+    /**
+     * 用户不存在
+     */
+    USER_NOT_FOUND(5010, "用户不存在"),
+
+    /**
+     * 不能关注自己
+     */
+    CANNOT_FOLLOW_SELF(5011, "不能关注自己"),
+
+    /**
+     * 已关注
+     */
+    ALREADY_FOLLOWED(5012, "您已经关注过该用户");
     /**
      * 状态码
      */

@@ -81,7 +81,7 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
                .orderByDesc(Deal::getCreateTime);
         
         Page<Deal> dealPage = dealMapper.selectPage(page, wrapper);
-        return dealPage.convert(dealConverter::toVO);
+        return (Page<DealVO>) dealPage.convert(dealConverter::toVO);
     }
 
     @Override
@@ -211,6 +211,6 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
                .orderByDesc(Deal::getCreateTime);
         
         Page<Deal> result = dealMapper.selectPage(dealPage, wrapper);
-        return result.convert(dealConverter::toVO);
+        return (Page<DealVO>) result.convert(dealConverter::toVO);
     }
 }

@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 /**
  * 用户对象转换器
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserConverter {
 
     UserConverter INSTANCE = Mappers.getMapper(UserConverter.class);

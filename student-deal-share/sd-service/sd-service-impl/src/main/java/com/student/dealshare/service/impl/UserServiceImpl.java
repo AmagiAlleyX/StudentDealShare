@@ -154,6 +154,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public Page<UserVO> pageUsers(int page, int size) {
+        Page<User> userPage = new Page<>(page, size);
+        Page<User> result = userMapper.selectPage(userPage, null);
+        
+        return (Page<UserVO>) result.convert(userConverter::toVO);
+    }
+
+    @Override
     public boolean isFollowing(Long followerId, Long followeeId) {
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserFollow::getFollowerId, followerId)

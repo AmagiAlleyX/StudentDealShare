@@ -4,14 +4,12 @@ import com.student.dealshare.model.dto.CommentCreateDTO;
 import com.student.dealshare.model.entity.Comment;
 import com.student.dealshare.model.vo.CommentVO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 /**
  * 评论对象转换器
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CommentConverter {
 
     CommentConverter INSTANCE = Mappers.getMapper(CommentConverter.class);

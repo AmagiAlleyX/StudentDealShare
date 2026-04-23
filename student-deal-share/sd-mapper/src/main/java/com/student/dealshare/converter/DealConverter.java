@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 /**
  * 优惠信息对象转换器
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface DealConverter {
 
     DealConverter INSTANCE = Mappers.getMapper(DealConverter.class);

@@ -61,7 +61,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
                .orderByDesc(Notification::getCreateTime);
         
         Page<Notification> result = notificationMapper.selectPage(notificationPage, wrapper);
-        return result.convert(this::convertToVO);
+        return (Page<NotificationVO>) result.convert(this::convertToVO);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         LambdaQueryWrapper<Notification> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Notification::getUserId, userId)
                .eq(Notification::getIsRead, 0);
-        return notificationMapper.selectCount(wrapper);
+        return Math.toIntExact(notificationMapper.selectCount(wrapper));
     }
 
     /**

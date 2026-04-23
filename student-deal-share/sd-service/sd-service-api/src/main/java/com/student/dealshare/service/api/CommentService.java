@@ -1,6 +1,6 @@
 package com.student.dealshare.service.api;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.student.dealshare.model.dto.CommentCreateDTO;
 import com.student.dealshare.model.vo.CommentVO;
 import java.util.List;
@@ -27,12 +27,13 @@ public interface CommentService {
 
     /**
      * 分页查询评论
+     *
      * @param postId 帖子 ID
-     * @param page 页码
-     * @param size 每页数量
+     * @param page   页码
+     * @param size   每页数量
      * @return 评论列表
      */
-    Page<CommentVO> pageComments(Long postId, int page, int size);
+    IPage<CommentVO> pageComments(Long postId, int page, int size);
 
     /**
      * 删除评论

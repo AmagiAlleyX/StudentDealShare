@@ -30,6 +30,10 @@
             <groupId>com.student.dealshare</groupId>
             <artifactId>sd-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.student.dealshare</groupId>
+            <artifactId>sd-security</artifactId>
+        </dependency>
 
         <!-- Spring Boot -->
         <dependency>

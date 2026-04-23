@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 /**
  * 帖子对象转换器
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PostConverter {
 
     PostConverter INSTANCE = Mappers.getMapper(PostConverter.class);

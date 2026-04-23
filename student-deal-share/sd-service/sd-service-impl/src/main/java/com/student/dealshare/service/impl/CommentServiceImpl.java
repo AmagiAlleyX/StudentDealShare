@@ -12,6 +12,7 @@ import com.student.dealshare.model.dto.CommentCreateDTO;
 import com.student.dealshare.model.entity.Comment;
 import com.student.dealshare.model.entity.LikeRecord;
 import com.student.dealshare.model.vo.CommentVO;
+import com.student.dealshare.security.SecurityUtils;
 import com.student.dealshare.service.api.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +83,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                .orderByDesc(Comment::getCreateTime);
         
         Page<Comment> result = commentMapper.selectPage(commentPage, wrapper);
-        return result.convert(commentConverter::toVO);
+        return (Page<CommentVO>) result.convert(commentConverter::toVO);
     }
 
     @Override

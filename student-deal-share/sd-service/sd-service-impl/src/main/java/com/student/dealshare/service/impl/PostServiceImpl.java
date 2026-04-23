@@ -85,7 +85,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                .orderByDesc(Post::getCreateTime);
         
         Page<Post> result = postMapper.selectPage(postPage, wrapper);
-        return result.convert(postConverter::toVO);
+        return (Page<PostVO>) result.convert(postConverter::toVO);
     }
 
     @Override
@@ -189,7 +189,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                .orderByDesc(Post::getCreateTime);
         
         Page<Post> result = postMapper.selectPage(postPage, wrapper);
-        return result.convert(postConverter::toVO);
+        return (Page<PostVO>) result.convert(postConverter::toVO);
     }
 
     @Override

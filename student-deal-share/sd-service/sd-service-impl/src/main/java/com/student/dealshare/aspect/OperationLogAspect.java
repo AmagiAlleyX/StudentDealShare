@@ -2,7 +2,6 @@ package com.student.dealshare.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.student.dealshare.annotation.OperationLog;
-
 import com.student.dealshare.service.api.OperationLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +37,7 @@ public class OperationLogAspect {
         long startTime = System.currentTimeMillis();
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        
-        OperationLog operationLog = new OperationLog();
+        com.student.dealshare.model.entity.OperationLog operationLog = new com.student.dealshare.model.entity.OperationLog();
         operationLog.setOperationTime(LocalDateTime.now());
         operationLog.setRequestMethod(request.getMethod());
         operationLog.setRequestUrl(request.getRequestURI());

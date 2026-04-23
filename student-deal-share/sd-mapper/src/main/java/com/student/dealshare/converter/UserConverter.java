@@ -30,11 +30,11 @@ public interface UserConverter {
     /**
      * DTO 更新 Entity
      */
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "username", ignore = true)
-    @Mapping(target = "createTime", ignore = true)
-    @Mapping(target = "updateTime", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     void updateUserFromDTO(UserUpdateDTO dto, @MappingTarget User user);
 }

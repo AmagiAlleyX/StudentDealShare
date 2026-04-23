@@ -33,7 +33,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         notification.setType(type);
         notification.setTitle(title);
         notification.setContent(content);
-        notification.setRelatedId(relatedId);
+        notification.setTargetId(relatedId);
         notification.setIsRead(0);
         
         notificationMapper.insert(notification);
@@ -45,7 +45,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         LambdaQueryWrapper<Notification> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Notification::getUserId, userId)
                .eq(Notification::getIsRead, 0)
-               .orderByDesc(Notification::getCreateTime);
+               .orderByDesc(Notification::getCreatedAt);
         
         List<Notification> notifications = notificationMapper.selectList(wrapper);
         return notifications.stream()
@@ -58,7 +58,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         Page<Notification> notificationPage = new Page<>(page, size);
         LambdaQueryWrapper<Notification> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Notification::getUserId, userId)
-               .orderByDesc(Notification::getCreateTime);
+               .orderByDesc(Notification::getCreatedAt);
         
         Page<Notification> result = notificationMapper.selectPage(notificationPage, wrapper);
         return (Page<NotificationVO>) result.convert(this::convertToVO);
@@ -99,19 +99,16 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
         return Math.toIntExact(notificationMapper.selectCount(wrapper));
     }
 
-    /**
-     * 转换为 VO
-     */
     private NotificationVO convertToVO(Notification notification) {
         NotificationVO vo = new NotificationVO();
-        vo.setNotificationId(notification.getNotificationId());
+        vo.setId(notification.getId());
         vo.setUserId(notification.getUserId());
         vo.setType(notification.getType());
         vo.setTitle(notification.getTitle());
         vo.setContent(notification.getContent());
-        vo.setRelatedId(notification.getRelatedId());
+        vo.setTargetId(notification.getTargetId());
         vo.setIsRead(notification.getIsRead());
-        vo.setCreateTime(notification.getCreateTime());
+        vo.setCreatedAt(notification.getCreatedAt());
         return vo;
     }
 }

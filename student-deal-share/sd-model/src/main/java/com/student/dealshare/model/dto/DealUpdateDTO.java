@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class DealUpdateDTO {
 
     @NotNull(message = "优惠 ID 不能为空")
-    private Long dealId;
+    private Long id;
 
     @Size(max = 100, message = "标题最多 100 字")
     private String title;
@@ -22,28 +22,32 @@ public class DealUpdateDTO {
 
     private Long categoryId;
 
-    @Size(max = 50, message = "品牌名称最多 50 字")
-    private String brand;
+    private Integer type;
 
-    @DecimalMin(value = "0.01", message = "原价必须大于 0")
-    private BigDecimal originalPrice;
+    private String imageUrls;
 
-    @DecimalMin(value = "0.01", message = "活动价必须大于 0")
+    private String videoUrl;
+
+    @DecimalMin(value = "0.01", message = "价格必须大于 0")
+    private BigDecimal price;
+
     private BigDecimal dealPrice;
 
-    private String discountInfo;
-
-    private String activityType;
+    private String discount;
 
     private java.time.LocalDateTime startTime;
 
     private java.time.LocalDateTime endTime;
 
-    private String link;
+    private String url;
 
-    private String coverImage;
+    private String qrCode;
 
-    private String[] images;
+    private String tags;
 
     private Integer status;
+
+    private Integer top;
+
+    private Integer recommend;
 }

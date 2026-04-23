@@ -21,29 +21,28 @@ public class DealCreateDTO {
     @NotNull(message = "分类不能为空")
     private Long categoryId;
 
-    @Size(max = 50, message = "品牌名称最多 50 字")
-    private String brand;
+    @NotNull(message = "类型不能为空")
+    private Integer type;
 
-    @NotNull(message = "原价不能为空")
-    @DecimalMin(value = "0.01", message = "原价必须大于 0")
-    private BigDecimal originalPrice;
+    private String imageUrls;
 
-    @NotNull(message = "活动价不能为空")
-    @DecimalMin(value = "0.01", message = "活动价必须大于 0")
+    private String videoUrl;
+
+    @NotNull(message = "价格不能为空")
+    @DecimalMin(value = "0.01", message = "价格必须大于 0")
+    private BigDecimal price;
+
     private BigDecimal dealPrice;
 
-    private String discountInfo;
-
-    private String activityType;
+    private String discount;
 
     private java.time.LocalDateTime startTime;
 
     private java.time.LocalDateTime endTime;
 
-    @NotBlank(message = "购买链接不能为空")
-    private String link;
+    private String url;
 
-    private String coverImage;
+    private String qrCode;
 
-    private String[] images;
+    private String tags;
 }

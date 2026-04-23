@@ -6,24 +6,31 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * 私信视图对象
- */
 @Data
 public class PrivateMessageVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long messageId;
+    private Long id;
 
     private Long senderId;
 
     private Long receiverId;
 
+    private String senderName;
+
+    private String senderAvatar;
+
+    private String receiverName;
+
+    private String receiverAvatar;
+
     private String content;
+
+    private String imageUrls;
 
     private Integer isRead;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 }

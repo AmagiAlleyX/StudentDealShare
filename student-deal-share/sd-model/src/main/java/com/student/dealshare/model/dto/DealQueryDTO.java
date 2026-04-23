@@ -7,9 +7,9 @@ public class DealQueryDTO {
 
     private Long categoryId;
 
-    private String keyword;
+    private Integer type;
 
-    private String activityType;
+    private String keyword;
 
     private Integer status;
 

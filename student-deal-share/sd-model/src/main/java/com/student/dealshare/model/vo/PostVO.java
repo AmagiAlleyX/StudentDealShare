@@ -12,17 +12,23 @@ public class PostVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long postId;
+    private Long id;
 
     private String title;
 
     private String content;
 
-    private Integer postType;
+    private Integer type;
 
-    private String[] images;
+    private String imageUrls;
+
+    private String videoUrls;
+
+    private String tags;
 
     private Long userId;
+
+    private Long categoryId;
 
     private String authorName;
 
@@ -30,19 +36,21 @@ public class PostVO implements Serializable {
 
     private Integer status;
 
-    private Integer isTop;
+    private Integer top;
 
-    private Integer isEssence;
+    private Integer essence;
 
-    private Long viewCount;
+    private Integer viewCount;
 
-    private Long commentCount;
+    private Integer favoriteCount;
 
-    private Long likeCount;
+    private Integer likeCount;
 
-    private Long shareCount;
+    private Integer commentCount;
 
-    private LocalDateTime createTime;
+    private Integer shareCount;
 
-    private LocalDateTime updateTime;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

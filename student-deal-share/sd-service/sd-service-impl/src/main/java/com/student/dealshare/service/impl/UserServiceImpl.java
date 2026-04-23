@@ -41,7 +41,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LoginVO register(UserRegisterDTO dto) {
-        // 检查用户名是否存在
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getUsername, dto.getUsername());
         User existUser = userMapper.selectOne(wrapper);
@@ -49,22 +48,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ResultCodeEnum.USERNAME_ALREADY_EXISTS);
         }
 
-        // 创建用户
         User user = userConverter.toEntity(dto);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setStatus(1);
-        user.setStudentVerified(0);
         userMapper.insert(user);
 
-        log.info("用户注册成功，userId: {}", user.getUserId());
+        log.info("用户注册成功，userId: {}", user.getId());
 
-        // 生成 token
         return buildLoginVO(user);
     }
 
     @Override
     public LoginVO login(UserLoginDTO dto) {
-        // 查询用户
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getUsername, dto.getUsername());
         User user = userMapper.selectOne(wrapper);
@@ -77,9 +72,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ResultCodeEnum.USER_DISABLED);
         }
 
-        log.info("用户登录成功，userId: {}", user.getUserId());
+        log.info("用户登录成功，userId: {}", user.getId());
 
-        // 生成 token
         return buildLoginVO(user);
     }
 
@@ -122,19 +116,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ResultCodeEnum.CANNOT_FOLLOW_SELF);
         }
 
-        // 检查是否已关注
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFollow::getFollowerId, followerId)
-               .eq(UserFollow::getFolloweeId, followeeId);
+        wrapper.eq(UserFollow::getUserId, followerId)
+               .eq(UserFollow::getFollowUserId, followeeId);
         UserFollow exist = userFollowMapper.selectOne(wrapper);
         if (exist != null) {
             throw new BusinessException(ResultCodeEnum.ALREADY_FOLLOWED);
         }
 
-        // 创建关注记录
         UserFollow userFollow = new UserFollow();
-        userFollow.setFollowerId(followerId);
-        userFollow.setFolloweeId(followeeId);
+        userFollow.setUserId(followerId);
+        userFollow.setFollowUserId(followeeId);
         userFollowMapper.insert(userFollow);
         
         log.info("用户关注成功，followerId: {}, followeeId: {}", followerId, followeeId);
@@ -146,8 +138,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Long followerId = SecurityUtils.getCurrentUserId();
 
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFollow::getFollowerId, followerId)
-               .eq(UserFollow::getFolloweeId, followeeId);
+        wrapper.eq(UserFollow::getUserId, followerId)
+               .eq(UserFollow::getFollowUserId, followeeId);
         userFollowMapper.delete(wrapper);
         
         log.info("用户取消关注成功，followerId: {}, followeeId: {}", followerId, followeeId);
@@ -164,16 +156,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public boolean isFollowing(Long followerId, Long followeeId) {
         LambdaQueryWrapper<UserFollow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFollow::getFollowerId, followerId)
-               .eq(UserFollow::getFolloweeId, followeeId);
+        wrapper.eq(UserFollow::getUserId, followerId)
+               .eq(UserFollow::getFollowUserId, followeeId);
         return userFollowMapper.selectCount(wrapper) > 0;
     }
 
-    /**
-     * 构建登录响应
-     */
     private LoginVO buildLoginVO(User user) {
-        String token = jwtTokenProvider.createToken(user.getUserId());
+        String token = jwtTokenProvider.createToken(user.getId());
         Long expireTime = jwtTokenProvider.getExpireTime();
 
         LoginVO loginVO = new LoginVO();

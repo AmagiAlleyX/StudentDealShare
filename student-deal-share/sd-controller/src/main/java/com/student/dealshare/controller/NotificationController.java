@@ -3,17 +3,13 @@ package com.student.dealshare.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.student.dealshare.annotation.OperationLog;
 import com.student.dealshare.common.result.R;
-import com.student.dealshare.model.dto.PrivateMessageSendDTO;
 import com.student.dealshare.model.vo.NotificationVO;
-import com.student.dealshare.model.vo.PrivateMessageVO;
 import com.student.dealshare.security.SecurityUtils;
 import com.student.dealshare.service.api.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 /**

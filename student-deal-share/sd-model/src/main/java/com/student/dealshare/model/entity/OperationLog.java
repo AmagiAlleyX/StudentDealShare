@@ -8,45 +8,36 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("operation_log")
+@TableName("t_operation_log")
 public class OperationLog implements Serializable {
-
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "log_id", type = IdType.ASSIGN_ID)
-    private Long logId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-    private Long operatorId;
+    private Long userId;
 
-    private String operatorType;
+    private String username;
 
-    private String operationModule;
+    private String operation;
 
-    private String operationType;
+    private String module;
 
-    private String operationDesc;
+    private String method;
 
-    private String requestMethod;
+    private String params;
 
-    private String requestUrl;
+    private String result;
 
-    private String requestParams;
-
-    private String ipAddress;
+    private String ip;
 
     private String userAgent;
 
-    private Long executeTime;
+    private Long time;
 
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime operationTime;
-
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    @TableLogic
-    private Integer deleted;
+    private LocalDateTime createdAt;
 }

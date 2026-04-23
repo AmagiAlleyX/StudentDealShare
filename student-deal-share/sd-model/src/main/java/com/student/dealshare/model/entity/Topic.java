@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("topic")
+@TableName("t_topic")
 public class Topic implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "topic_id", type = IdType.ASSIGN_ID)
-    private Long topicId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String name;
 
@@ -23,18 +23,15 @@ public class Topic implements Serializable {
 
     private String coverImage;
 
-    private Long postCount;
+    private Integer postCount;
 
-    private Long followCount;
+    private Integer viewCount;
 
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    @TableLogic
-    private Integer deleted;
+    private LocalDateTime updatedAt;
 }

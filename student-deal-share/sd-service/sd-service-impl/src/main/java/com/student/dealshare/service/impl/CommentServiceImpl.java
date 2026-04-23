@@ -22,9 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 评论服务实现类
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,32 +37,22 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         Comment comment = commentConverter.toEntity(dto);
         comment.setUserId(SecurityUtils.getCurrentUserId());
         comment.setStatus(1);
-        comment.setLikeCount(0L);
-        
-        // 设置评论级别
-        if (dto.getParentId() == null || dto.getParentId() == 0) {
-            comment.setLevel(1);
-        } else {
-            Comment parent = commentMapper.selectById(dto.getParentId());
-            if (parent == null) {
-                throw new BusinessException(ResultCodeEnum.COMMENT_NOT_FOUND);
-            }
-            comment.setLevel(parent.getLevel() + 1);
-        }
+        comment.setLikeCount(0);
         
         commentMapper.insert(comment);
-        log.info("评论发表成功，commentId: {}", comment.getCommentId());
+        log.info("评论发表成功，commentId: {}", comment.getId());
 
         return commentConverter.toVO(comment);
     }
 
     @Override
-    public List<CommentVO> listCommentsByPost(Long postId, int limit) {
+    public List<CommentVO> listCommentsByPost(Long targetId, int limit) {
         LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Comment::getPostId, postId)
+        wrapper.eq(Comment::getTargetType, 2)
+               .eq(Comment::getTargetId, targetId)
                .eq(Comment::getStatus, 1)
                .eq(Comment::getParentId, 0)
-               .orderByDesc(Comment::getCreateTime)
+               .orderByDesc(Comment::getCreatedAt)
                .last("LIMIT " + limit);
         
         List<Comment> comments = commentMapper.selectList(wrapper);
@@ -75,12 +62,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     @Override
-    public Page<CommentVO> pageComments(Long postId, int page, int size) {
+    public Page<CommentVO> pageComments(Long targetId, int page, int size) {
         Page<Comment> commentPage = new Page<>(page, size);
         LambdaQueryWrapper<Comment> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Comment::getPostId, postId)
+        wrapper.eq(Comment::getTargetType, 2)
+               .eq(Comment::getTargetId, targetId)
                .eq(Comment::getStatus, 1)
-               .orderByDesc(Comment::getCreateTime);
+               .orderByDesc(Comment::getCreatedAt);
         
         Page<Comment> result = commentMapper.selectPage(commentPage, wrapper);
         return (Page<CommentVO>) result.convert(commentConverter::toVO);
@@ -88,25 +76,25 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteComment(Long commentId) {
-        Comment comment = commentMapper.selectById(commentId);
+    public void deleteComment(Long id) {
+        Comment comment = commentMapper.selectById(id);
         if (comment == null) {
             throw new BusinessException(ResultCodeEnum.COMMENT_NOT_FOUND);
         }
         
-        commentMapper.deleteById(commentId);
-        log.info("评论删除成功，commentId: {}", commentId);
+        commentMapper.deleteById(id);
+        log.info("评论删除成功，commentId: {}", id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void likeComment(Long commentId) {
+    public void likeComment(Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
         
         LambdaQueryWrapper<LikeRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LikeRecord::getUserId, userId)
-               .eq(LikeRecord::getTargetType, 2)
-               .eq(LikeRecord::getTargetId, commentId);
+               .eq(LikeRecord::getTargetType, 3)
+               .eq(LikeRecord::getTargetId, id);
         
         LikeRecord exist = likeRecordMapper.selectOne(wrapper);
         if (exist != null) {
@@ -115,43 +103,43 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         LikeRecord likeRecord = new LikeRecord();
         likeRecord.setUserId(userId);
-        likeRecord.setTargetType(2L);
-        likeRecord.setTargetId(commentId);
+        likeRecord.setTargetType(3);
+        likeRecord.setTargetId(id);
         likeRecordMapper.insert(likeRecord);
 
-        Comment comment = commentMapper.selectById(commentId);
+        Comment comment = commentMapper.selectById(id);
         comment.setLikeCount(comment.getLikeCount() + 1);
         commentMapper.updateById(comment);
         
-        log.info("评论点赞成功，commentId: {}, userId: {}", commentId, userId);
+        log.info("评论点赞成功，commentId: {}, userId: {}", id, userId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void unlikeComment(Long commentId) {
+    public void unlikeComment(Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
 
         LambdaQueryWrapper<LikeRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LikeRecord::getUserId, userId)
-               .eq(LikeRecord::getTargetType, 2)
-               .eq(LikeRecord::getTargetId, commentId);
+               .eq(LikeRecord::getTargetType, 3)
+               .eq(LikeRecord::getTargetId, id);
         likeRecordMapper.delete(wrapper);
 
-        Comment comment = commentMapper.selectById(commentId);
+        Comment comment = commentMapper.selectById(id);
         if (comment != null && comment.getLikeCount() > 0) {
             comment.setLikeCount(comment.getLikeCount() - 1);
             commentMapper.updateById(comment);
         }
         
-        log.info("评论取消点赞成功，commentId: {}, userId: {}", commentId, userId);
+        log.info("评论取消点赞成功，commentId: {}, userId: {}", id, userId);
     }
 
     @Override
-    public boolean isLiked(Long userId, Long commentId) {
+    public boolean isLiked(Long userId, Long id) {
         LambdaQueryWrapper<LikeRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LikeRecord::getUserId, userId)
-               .eq(LikeRecord::getTargetType, 2)
-               .eq(LikeRecord::getTargetId, commentId);
+               .eq(LikeRecord::getTargetType, 3)
+               .eq(LikeRecord::getTargetId, id);
         return likeRecordMapper.selectCount(wrapper) > 0;
     }
 }

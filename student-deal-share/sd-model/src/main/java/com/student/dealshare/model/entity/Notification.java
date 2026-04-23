@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("notification")
+@TableName("t_notification")
 public class Notification implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "notification_id", type = IdType.ASSIGN_ID)
-    private Long notificationId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private Long userId;
 
@@ -25,12 +25,16 @@ public class Notification implements Serializable {
 
     private String content;
 
-    private Long relatedId;
+    private Integer targetType;
+
+    private Long targetId;
+
+    private Long fromUserId;
 
     private Integer isRead;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableLogic
     private Integer deleted;

@@ -12,29 +12,33 @@ public class CommentVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long commentId;
-
-    private Long postId;
+    private Long id;
 
     private Long userId;
+
+    private Integer targetType;
+
+    private Long targetId;
+
+    private Long parentId;
+
+    private Long replyUserId;
 
     private String authorName;
 
     private String authorAvatar;
 
-    private Long parentId;
-
-    private Integer level;
+    private String replyUserName;
 
     private String content;
 
-    private String[] images;
+    private String imageUrls;
+
+    private Integer likeCount;
 
     private Integer status;
 
-    private Long likeCount;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedAt;
 }

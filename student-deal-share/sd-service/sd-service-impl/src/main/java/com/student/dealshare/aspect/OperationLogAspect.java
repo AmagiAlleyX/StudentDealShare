@@ -37,27 +37,50 @@ public class OperationLogAspect {
         long startTime = System.currentTimeMillis();
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+
         com.student.dealshare.model.entity.OperationLog operationLog = new com.student.dealshare.model.entity.OperationLog();
-        operationLog.setOperationTime(LocalDateTime.now());
-        operationLog.setRequestMethod(request.getMethod());
-        operationLog.setRequestUrl(request.getRequestURI());
-        operationLog.setRequestParams(objectMapper.writeValueAsString(point.getArgs()));
-        operationLog.setIpAddress(request.getRemoteAddr());
+
+        OperationLog annotation = getOperationLogAnnotation(point);
+        if (annotation != null) {
+            operationLog.setModule(annotation.module());
+            operationLog.setOperation(annotation.type());
+        }
+
+        operationLog.setCreatedAt(LocalDateTime.now());
+        operationLog.setMethod(request.getMethod());
+        operationLog.setParams(objectMapper.writeValueAsString(point.getArgs()));
+        operationLog.setIp(request.getRemoteAddr());
         operationLog.setUserAgent(request.getHeader("User-Agent"));
-        
+
         try {
             Object result = point.proceed();
             long executeTime = System.currentTimeMillis() - startTime;
-            operationLog.setExecuteTime(executeTime);
+            operationLog.setTime(executeTime);
             operationLog.setStatus(1);
+            operationLog.setResult(objectMapper.writeValueAsString(result));
             operationLogService.save(operationLog);
             return result;
         } catch (Throwable e) {
             long executeTime = System.currentTimeMillis() - startTime;
-            operationLog.setExecuteTime(executeTime);
+            operationLog.setTime(executeTime);
             operationLog.setStatus(0);
+            operationLog.setResult(e.getMessage());
             operationLogService.save(operationLog);
             throw e;
+        }
+    }
+    /**
+     * 获取操作日志注解
+     */
+    private OperationLog getOperationLogAnnotation(ProceedingJoinPoint point) {
+        try {
+            org.aspectj.lang.reflect.MethodSignature signature =
+                    (org.aspectj.lang.reflect.MethodSignature) point.getSignature();
+            java.lang.reflect.Method method = signature.getMethod();
+            return method.getAnnotation(OperationLog.class);
+        } catch (Exception e) {
+            log.warn("获取 OperationLog 注解失败", e);
+            return null;
         }
     }
 }

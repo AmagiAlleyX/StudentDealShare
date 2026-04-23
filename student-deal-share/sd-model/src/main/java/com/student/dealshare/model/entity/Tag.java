@@ -8,27 +8,23 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("tag")
+@TableName("t_tag")
 public class Tag implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "tag_id", type = IdType.ASSIGN_ID)
-    private Long tagId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String name;
 
-    private String type;
+    private Integer type;
+
+    private Integer useCount;
 
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    @TableLogic
-    private Integer deleted;
+    private LocalDateTime createdAt;
 }

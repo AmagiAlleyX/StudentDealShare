@@ -8,23 +8,23 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("user_favorite")
+@TableName("t_user_favorite")
 public class UserFavorite implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "favorite_id", type = IdType.ASSIGN_ID)
-    private Long favoriteId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private Long userId;
 
-    private Long targetType;
+    private Integer targetType;
 
     private Long targetId;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableLogic
     private Integer deleted;

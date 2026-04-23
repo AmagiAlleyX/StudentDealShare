@@ -6,16 +6,13 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * 通知视图对象
- */
 @Data
 public class NotificationVO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long notificationId;
+    private Long id;
 
     private Long userId;
 
@@ -25,9 +22,17 @@ public class NotificationVO implements Serializable {
 
     private String content;
 
-    private Long relatedId;
+    private Integer targetType;
+
+    private Long targetId;
+
+    private Long fromUserId;
+
+    private String fromUserName;
+
+    private String fromUserAvatar;
 
     private Integer isRead;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 }

@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("user")
+@TableName("t_user")
 public class User implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
-    private Long userId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String username;
 
@@ -33,17 +33,23 @@ public class User implements Serializable {
 
     private String school;
 
+    private String college;
+
     private String studentId;
 
-    private Integer studentVerified;
+    private Integer level;
+
+    private Integer points;
 
     private Integer status;
 
+    private LocalDateTime lastLoginTime;
+
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedAt;
 
     @TableLogic
     private Integer deleted;

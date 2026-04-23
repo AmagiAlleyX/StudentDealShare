@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("private_message")
+@TableName("t_private_message")
 public class PrivateMessage implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "message_id", type = IdType.ASSIGN_ID)
-    private Long messageId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private Long senderId;
 
@@ -23,10 +23,12 @@ public class PrivateMessage implements Serializable {
 
     private String content;
 
+    private String imageUrls;
+
     private Integer isRead;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableLogic
     private Integer deleted;

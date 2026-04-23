@@ -8,27 +8,26 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("system_config")
+@TableName("t_system_config")
 public class SystemConfig implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "config_id", type = IdType.ASSIGN_ID)
-    private Long configId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String configKey;
 
     private String configValue;
 
+    private String configType;
+
     private String description;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    @TableLogic
-    private Integer deleted;
+    private LocalDateTime updatedAt;
 }

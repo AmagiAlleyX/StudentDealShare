@@ -15,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * 私信服务实现类
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -46,7 +43,7 @@ public class PrivateMessageServiceImpl extends ServiceImpl<PrivateMessageMapper,
                           .eq(PrivateMessage::getReceiverId, otherUserId)
                      .or(w1 -> w1.eq(PrivateMessage::getSenderId, otherUserId)
                                  .eq(PrivateMessage::getReceiverId, userId)))
-               .orderByDesc(PrivateMessage::getCreateTime);
+               .orderByDesc(PrivateMessage::getCreatedAt);
         
         Page<PrivateMessage> result = privateMessageMapper.selectPage(messagePage, wrapper);
         return (Page<PrivateMessageVO>) result.convert(this::convertToVO);
@@ -54,43 +51,39 @@ public class PrivateMessageServiceImpl extends ServiceImpl<PrivateMessageMapper,
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void markAsRead(Long messageId) {
-        PrivateMessage message = privateMessageMapper.selectById(messageId);
+    public void markAsRead(Long id) {
+        PrivateMessage message = privateMessageMapper.selectById(id);
         if (message != null) {
             message.setIsRead(1);
             privateMessageMapper.updateById(message);
-            log.info("私信标记为已读，messageId: {}", messageId);
+            log.info("私信标记为已读，messageId: {}", id);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteMessage(Long messageId, Long userId) {
-        PrivateMessage message = privateMessageMapper.selectById(messageId);
+    public void deleteMessage(Long id, Long userId) {
+        PrivateMessage message = privateMessageMapper.selectById(id);
         if (message == null) {
             throw new BusinessException(ResultCodeEnum.MESSAGE_NOT_FOUND);
         }
         
-        // 只能删除自己的消息
         if (!message.getSenderId().equals(userId) && !message.getReceiverId().equals(userId)) {
             throw new BusinessException(ResultCodeEnum.NO_PERMISSION);
         }
         
-        privateMessageMapper.deleteById(messageId);
-        log.info("私信删除成功，messageId: {}", messageId);
+        privateMessageMapper.deleteById(id);
+        log.info("私信删除成功，messageId: {}", id);
     }
 
-    /**
-     * 转换为 VO
-     */
     private PrivateMessageVO convertToVO(PrivateMessage message) {
         PrivateMessageVO vo = new PrivateMessageVO();
-        vo.setMessageId(message.getMessageId());
+        vo.setId(message.getId());
         vo.setSenderId(message.getSenderId());
         vo.setReceiverId(message.getReceiverId());
         vo.setContent(message.getContent());
         vo.setIsRead(message.getIsRead());
-        vo.setCreateTime(message.getCreateTime());
+        vo.setCreatedAt(message.getCreatedAt());
         return vo;
     }
 }

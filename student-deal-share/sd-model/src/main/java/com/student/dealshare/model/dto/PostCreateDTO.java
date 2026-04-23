@@ -16,9 +16,15 @@ public class PostCreateDTO {
     @Size(max = 10000, message = "内容最多 10000 字")
     private String content;
 
-    private Integer postType;
+    private Integer type;
 
-    private String[] images;
+    private String imageUrls;
+
+    private String videoUrls;
+
+    private String tags;
+
+    private Long categoryId;
 
     private Long[] topicIds;
 }

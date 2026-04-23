@@ -8,24 +8,21 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("like_record")
+@TableName("t_like_record")
 public class LikeRecord implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "record_id", type = IdType.ASSIGN_ID)
-    private Long recordId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private Long userId;
 
-    private Long targetType;
+    private Integer targetType;
 
     private Long targetId;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    @TableLogic
-    private Integer deleted;
+    private LocalDateTime createdAt;
 }

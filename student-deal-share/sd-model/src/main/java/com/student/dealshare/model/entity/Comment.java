@@ -8,36 +8,38 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("comment")
+@TableName("t_comment")
 public class Comment implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "comment_id", type = IdType.ASSIGN_ID)
-    private Long commentId;
-
-    private Long postId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private Long userId;
 
+    private Integer targetType;
+
+    private Long targetId;
+
     private Long parentId;
 
-    private Integer level;
+    private Long replyUserId;
 
     private String content;
 
-    private String[] images;
+    private String imageUrls;
+
+    private Integer likeCount;
 
     private Integer status;
 
-    private Long likeCount;
-
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedAt;
 
     @TableLogic
     private Integer deleted;

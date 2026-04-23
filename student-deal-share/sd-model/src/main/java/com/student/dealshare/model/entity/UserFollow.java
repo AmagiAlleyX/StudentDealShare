@@ -8,21 +8,21 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("user_follow")
+@TableName("t_user_follow")
 public class UserFollow implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "follow_id", type = IdType.ASSIGN_ID)
-    private Long followId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-    private Long followerId;
+    private Long userId;
 
-    private Long followeeId;
+    private Long followUserId;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableLogic
     private Integer deleted;

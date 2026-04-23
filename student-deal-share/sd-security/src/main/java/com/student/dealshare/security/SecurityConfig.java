@@ -1,5 +1,6 @@
 package com.student.dealshare.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,13 +9,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Spring Security 配置类
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     /**
      * 配置密码编码器
@@ -27,7 +32,6 @@ public class SecurityConfig {
 
     /**
      * 配置安全过滤链
-     * 开发环境：暂时关闭所有拦截
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,9 +42,18 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             // 配置请求授权
             .authorizeHttpRequests(auth -> auth
-                // 允许所有请求（开发环境临时方案）
+                // 允许公开访问的接口
+                .requestMatchers("/doc.html", "/webjars/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**")
+                .permitAll()
+                .requestMatchers("/api/user/register", "/api/user/login")
+                .permitAll()
+                .requestMatchers("/druid/**")
+                .permitAll()
+                // 其他请求都需要认证
                 .anyRequest().permitAll()
-            );
+            )
+            // 添加 JWT 过滤器
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         return http.build();
     }

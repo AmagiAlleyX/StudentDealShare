@@ -49,7 +49,7 @@ public class CommentController {
             @PathVariable Long postId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<CommentVO> commentPage = commentService.pageComments(postId, page, size);
+        Page<CommentVO> commentPage = (Page<CommentVO>) commentService.pageComments(postId, page, size);
         return R.ok(commentPage);
     }
 

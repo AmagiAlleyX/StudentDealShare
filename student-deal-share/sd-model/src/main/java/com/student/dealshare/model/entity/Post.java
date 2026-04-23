@@ -8,44 +8,52 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("post")
+@TableName("t_post")
 public class Post implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "post_id", type = IdType.ASSIGN_ID)
-    private Long postId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String title;
 
     private String content;
 
-    private Integer postType;
-
-    private String[] images;
-
     private Long userId;
+
+    private Long categoryId;
+
+    private String imageUrls;
+
+    private String videoUrls;
+
+    private String tags;
+
+    private Integer type;
 
     private Integer status;
 
-    private Integer isTop;
+    private Integer viewCount;
 
-    private Integer isEssence;
+    private Integer favoriteCount;
 
-    private Long viewCount;
+    private Integer likeCount;
 
-    private Long commentCount;
+    private Integer commentCount;
 
-    private Long likeCount;
+    private Integer shareCount;
 
-    private Long shareCount;
+    private Integer top;
+
+    private Integer essence;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedAt;
 
     @TableLogic
     private Integer deleted;

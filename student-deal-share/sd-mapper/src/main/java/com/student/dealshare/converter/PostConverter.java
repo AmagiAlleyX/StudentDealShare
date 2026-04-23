@@ -30,10 +30,10 @@ public interface PostConverter {
     /**
      * DTO 更新 Entity
      */
-    @Mapping(target = "postId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "createTime", ignore = true)
-    @Mapping(target = "updateTime", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "viewCount", ignore = true)
     @Mapping(target = "commentCount", ignore = true)

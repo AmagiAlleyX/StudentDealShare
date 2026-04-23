@@ -13,7 +13,7 @@ public class DealVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long dealId;
+    private Long id;
 
     private String title;
 
@@ -23,41 +23,51 @@ public class DealVO implements Serializable {
 
     private String categoryName;
 
-    private String brand;
+    private Long userId;
 
-    private BigDecimal originalPrice;
+    private Integer type;
+
+    private String imageUrls;
+
+    private String videoUrl;
+
+    private BigDecimal price;
 
     private BigDecimal dealPrice;
 
-    private String discountInfo;
-
-    private String activityType;
+    private String discount;
 
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
-    private String link;
+    private String url;
 
-    private String coverImage;
+    private String qrCode;
 
-    private String[] images;
+    private String tags;
 
     private Integer status;
 
-    private Integer isVerified;
+    private Integer viewCount;
 
-    private Long viewCount;
+    private Integer favoriteCount;
 
-    private Long favoriteCount;
+    private Integer likeCount;
 
-    private Long shareCount;
+    private Integer commentCount;
 
-    private Long userId;
+    private Integer shareCount;
+
+    private Integer top;
+
+    private Integer recommend;
 
     private String authorName;
 
     private String authorAvatar;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

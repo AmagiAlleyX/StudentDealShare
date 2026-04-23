@@ -26,7 +26,11 @@
             <groupId>com.student.dealshare</groupId>
             <artifactId>sd-security</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.student.dealshare</groupId>
+            <artifactId>sd-controller</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

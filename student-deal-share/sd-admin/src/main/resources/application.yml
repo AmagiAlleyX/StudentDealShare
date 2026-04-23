@@ -34,6 +34,16 @@ spring:
           max-idle: 10
           min-idle: 5
 
+# 应用配置
+app:
+  dev-mode: true  # 开发模式：true=未登录时使用默认测试用户
+  dev-user-id: 1 # 开发模式下的默认测试用户 ID
+
+# JWT 配置
+jwt:
+  secret: student-deal-share-secret-key-2024-for-jwt-token-generation
+  expire: 86400000
+
 # MyBatis Plus 配置
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml

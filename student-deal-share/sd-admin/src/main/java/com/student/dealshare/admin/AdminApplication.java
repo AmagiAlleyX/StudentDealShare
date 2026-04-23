@@ -3,10 +3,8 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-
 /**
  * 后台管理模块启动类
- * 
  * @author student-deal-share
  * @since 1.0.0
  */
@@ -14,7 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 @MapperScan("com.student.dealshare.mapper")
 @ComponentScan(basePackages = {"com.student.dealshare"})
 public class AdminApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(AdminApplication.class, args);
         System.out.println("========================================");

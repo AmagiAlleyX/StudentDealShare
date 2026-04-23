@@ -25,9 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 帖子服务实现类
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -44,33 +41,32 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         Post post = postConverter.toEntity(dto);
         post.setUserId(SecurityUtils.getCurrentUserId());
         post.setStatus(1);
-        post.setIsTop(0);
-        post.setIsEssence(0);
-        post.setViewCount(0L);
-        post.setCommentCount(0L);
-        post.setLikeCount(0L);
-        post.setShareCount(0L);
+        post.setTop(0);
+        post.setEssence(0);
+        post.setViewCount(0);
+        post.setCommentCount(0);
+        post.setLikeCount(0);
+        post.setShareCount(0);
         
         postMapper.insert(post);
-        log.info("帖子发布成功，postId: {}", post.getPostId());
+        log.info("帖子发布成功，postId: {}", post.getId());
 
-        // 关联话题
         if (dto.getTopicIds() != null && dto.getTopicIds().length > 0) {
             for (Long topicId : dto.getTopicIds()) {
                 PostTopic postTopic = new PostTopic();
-                postTopic.setPostId(post.getPostId());
+                postTopic.setPostId(post.getId());
                 postTopic.setTopicId(topicId);
                 postTopicMapper.insert(postTopic);
             }
-            log.info("帖子关联话题成功，postId: {}, topicIds: {}", post.getPostId(), dto.getTopicIds());
+            log.info("帖子关联话题成功，postId: {}, topicIds: {}", post.getId(), dto.getTopicIds());
         }
 
         return postConverter.toVO(post);
     }
 
     @Override
-    public PostVO getPostById(Long postId) {
-        Post post = postMapper.selectById(postId);
+    public PostVO getPostById(Long id) {
+        Post post = postMapper.selectById(id);
         if (post == null) {
             throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
         }
@@ -82,7 +78,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         Page<Post> postPage = new Page<>(page, size);
         LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Post::getStatus, 1)
-               .orderByDesc(Post::getCreateTime);
+               .orderByDesc(Post::getCreatedAt);
         
         Page<Post> result = postMapper.selectPage(postPage, wrapper);
         return (Page<PostVO>) result.convert(postConverter::toVO);
@@ -91,32 +87,32 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePost(PostUpdateDTO dto) {
-        Post post = postMapper.selectById(dto.getPostId());
+        Post post = postMapper.selectById(dto.getId());
         if (post == null) {
             throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
         }
 
         postConverter.updatePostFromDTO(dto, post);
         postMapper.updateById(post);
-        log.info("帖子更新成功，postId: {}", dto.getPostId());
+        log.info("帖子更新成功，postId: {}", dto.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deletePost(Long postId) {
-        Post post = postMapper.selectById(postId);
+    public void deletePost(Long id) {
+        Post post = postMapper.selectById(id);
         if (post == null) {
             throw new BusinessException(ResultCodeEnum.POST_NOT_FOUND);
         }
         
-        postMapper.deleteById(postId);
-        log.info("帖子删除成功，postId: {}", postId);
+        postMapper.deleteById(id);
+        log.info("帖子删除成功，postId: {}", id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void incrementViewCount(Long postId) {
-        Post post = postMapper.selectById(postId);
+    public void incrementViewCount(Long id) {
+        Post post = postMapper.selectById(id);
         if (post != null) {
             post.setViewCount(post.getViewCount() + 1);
             postMapper.updateById(post);
@@ -125,13 +121,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void likePost(Long postId) {
+    public void likePost(Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
         
         LambdaQueryWrapper<LikeRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LikeRecord::getUserId, userId)
-               .eq(LikeRecord::getTargetType, 1)
-               .eq(LikeRecord::getTargetId, postId);
+               .eq(LikeRecord::getTargetType, 2)
+               .eq(LikeRecord::getTargetId, id);
         
         LikeRecord exist = likeRecordMapper.selectOne(wrapper);
         if (exist != null) {
@@ -140,43 +136,43 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 
         LikeRecord likeRecord = new LikeRecord();
         likeRecord.setUserId(userId);
-        likeRecord.setTargetType(1L);
-        likeRecord.setTargetId(postId);
+        likeRecord.setTargetType(2);
+        likeRecord.setTargetId(id);
         likeRecordMapper.insert(likeRecord);
 
-        Post post = postMapper.selectById(postId);
+        Post post = postMapper.selectById(id);
         post.setLikeCount(post.getLikeCount() + 1);
         postMapper.updateById(post);
         
-        log.info("帖子点赞成功，postId: {}, userId: {}", postId, userId);
+        log.info("帖子点赞成功，postId: {}, userId: {}", id, userId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void unlikePost(Long postId) {
+    public void unlikePost(Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
 
         LambdaQueryWrapper<LikeRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LikeRecord::getUserId, userId)
-               .eq(LikeRecord::getTargetType, 1)
-               .eq(LikeRecord::getTargetId, postId);
+               .eq(LikeRecord::getTargetType, 2)
+               .eq(LikeRecord::getTargetId, id);
         likeRecordMapper.delete(wrapper);
 
-        Post post = postMapper.selectById(postId);
+        Post post = postMapper.selectById(id);
         if (post != null && post.getLikeCount() > 0) {
             post.setLikeCount(post.getLikeCount() - 1);
             postMapper.updateById(post);
         }
         
-        log.info("帖子取消点赞成功，postId: {}, userId: {}", postId, userId);
+        log.info("帖子取消点赞成功，postId: {}, userId: {}", id, userId);
     }
 
     @Override
-    public boolean isLiked(Long userId, Long postId) {
+    public boolean isLiked(Long userId, Long id) {
         LambdaQueryWrapper<LikeRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LikeRecord::getUserId, userId)
-               .eq(LikeRecord::getTargetType, 1)
-               .eq(LikeRecord::getTargetId, postId);
+               .eq(LikeRecord::getTargetType, 2)
+               .eq(LikeRecord::getTargetId, id);
         return likeRecordMapper.selectCount(wrapper) > 0;
     }
 
@@ -186,7 +182,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Post::getUserId, userId)
                .eq(Post::getStatus, 1)
-               .orderByDesc(Post::getCreateTime);
+               .orderByDesc(Post::getCreatedAt);
         
         Page<Post> result = postMapper.selectPage(postPage, wrapper);
         return (Page<PostVO>) result.convert(postConverter::toVO);
@@ -209,8 +205,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     public List<PostVO> listEssencePosts(int limit) {
         LambdaQueryWrapper<Post> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Post::getStatus, 1)
-               .eq(Post::getIsEssence, 1)
-               .orderByDesc(Post::getCreateTime)
+               .eq(Post::getEssence, 1)
+               .orderByDesc(Post::getCreatedAt)
                .last("LIMIT " + limit);
         
         List<Post> posts = postMapper.selectList(wrapper);

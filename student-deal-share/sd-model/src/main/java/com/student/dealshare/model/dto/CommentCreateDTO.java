@@ -9,14 +9,19 @@ import jakarta.validation.constraints.Size;
 @Data
 public class CommentCreateDTO {
 
-    @NotNull(message = "帖子 ID 不能为空")
-    private Long postId;
+    @NotNull(message = "目标类型不能为空")
+    private Integer targetType;
+
+    @NotNull(message = "目标 ID 不能为空")
+    private Long targetId;
 
     private Long parentId;
+
+    private Long replyUserId;
 
     @NotBlank(message = "评论内容不能为空")
     @Size(max = 1000, message = "评论最多 1000 字")
     private String content;
 
-    private String[] images;
+    private String imageUrls;
 }

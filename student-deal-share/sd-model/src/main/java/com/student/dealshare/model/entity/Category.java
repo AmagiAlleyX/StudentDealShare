@@ -8,32 +8,32 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("category")
+@TableName("t_category")
 public class Category implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "category_id", type = IdType.ASSIGN_ID)
-    private Long categoryId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String name;
 
     private Long parentId;
 
-    private Integer level;
-
     private String icon;
 
-    private Integer sortOrder;
+    private Integer sort;
+
+    private Integer level;
 
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedAt;
 
     @TableLogic
     private Integer deleted;

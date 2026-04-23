@@ -9,14 +9,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("deal")
+@TableName("t_deal")
 public class Deal implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "deal_id", type = IdType.ASSIGN_ID)
-    private Long dealId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     private String title;
 
@@ -24,43 +24,51 @@ public class Deal implements Serializable {
 
     private Long categoryId;
 
-    private String brand;
+    private Long userId;
 
-    private BigDecimal originalPrice;
+    private Integer type;
+
+    private String imageUrls;
+
+    private String videoUrl;
+
+    private BigDecimal price;
 
     private BigDecimal dealPrice;
 
-    private String discountInfo;
-
-    private String activityType;
+    private String discount;
 
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
-    private String link;
+    private String url;
 
-    private String coverImage;
+    private String qrCode;
 
-    private String[] images;
+    private String tags;
 
     private Integer status;
 
-    private Integer isVerified;
+    private Integer viewCount;
 
-    private Long viewCount;
+    private Integer favoriteCount;
 
-    private Long favoriteCount;
+    private Integer likeCount;
 
-    private Long shareCount;
+    private Integer commentCount;
 
-    private Long userId;
+    private Integer shareCount;
+
+    private Integer top;
+
+    private Integer recommend;
 
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private LocalDateTime createdAt;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private LocalDateTime updatedAt;
 
     @TableLogic
     private Integer deleted;

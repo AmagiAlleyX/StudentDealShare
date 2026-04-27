@@ -52,7 +52,7 @@ public class UserController {
 
     @Operation(summary = "获取用户详情")
     @GetMapping("/{id}")
-    public R<UserVO> getUserById(@PathVariable Long id) {
+    public R<UserVO> getUserById(@PathVariable("id") Long id) {
         UserVO user = userService.getUserById(id);
         return R.ok(user);
     }

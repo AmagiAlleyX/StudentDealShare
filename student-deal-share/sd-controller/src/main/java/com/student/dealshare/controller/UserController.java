@@ -68,16 +68,17 @@ public class UserController {
     @Operation(summary = "分页查询用户列表")
     @GetMapping("/page")
     public R<Page<UserVO>> pageUsers(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         Page<UserVO> userPage = userService.pageUsers(page, size);
         return R.ok(userPage);
     }
 
+
     @Operation(summary = "关注用户")
     @PostMapping("/follow/{followeeId}")
     @OperationLog(module = "用户管理", type = "FOLLOW", description = "关注用户")
-    public R<Void> followUser(@PathVariable Long followeeId) {
+    public R<Void> followUser(@PathVariable("followeeId") Long followeeId) {
         userService.followUser(followeeId);
         return R.ok();
     }
@@ -85,14 +86,14 @@ public class UserController {
     @Operation(summary = "取消关注用户")
     @DeleteMapping("/follow/{followeeId}")
     @OperationLog(module = "用户管理", type = "UNFOLLOW", description = "取消关注")
-    public R<Void> unfollowUser(@PathVariable Long followeeId) {
+    public R<Void> unfollowUser(@PathVariable("followeeId") Long followeeId) {
         userService.unfollowUser(followeeId);
         return R.ok();
     }
 
     @Operation(summary = "检查是否已关注")
     @GetMapping("/follow/check/{followeeId}")
-    public R<Boolean> isFollowing(@PathVariable Long followeeId) {
+    public R<Boolean> isFollowing(@PathVariable("followeeId") Long followeeId) {
         boolean following = userService.isFollowing(SecurityUtils.getCurrentUserId(), followeeId);
         return R.ok(following);
     }

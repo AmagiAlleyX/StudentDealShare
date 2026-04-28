@@ -46,10 +46,6 @@
                   </el-icon>
                   {{ themeStore.isDark ? '浅色模式' : '深色模式' }}
                 </el-dropdown-item>
-                <el-dropdown-item divided>
-                  <el-icon><User /></el-icon>
-                  登录/注册
-                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

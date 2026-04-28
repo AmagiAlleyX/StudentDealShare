@@ -163,13 +163,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private LoginVO buildLoginVO(User user) {
         String token = jwtTokenProvider.createToken(user.getId());
-        Long expireTime = jwtTokenProvider.getExpireTime();
+        // 计算绝对过期时间戳（毫秒）
+        Long expireTime = System.currentTimeMillis() + jwtTokenProvider.getExpireTime();
 
         LoginVO loginVO = new LoginVO();
         loginVO.setUserInfo(userConverter.toVO(user));
         loginVO.setToken(token);
         loginVO.setExpireTime(expireTime);
-        loginVO.setExpiresIn(expireTime / 1000);
+        loginVO.setExpiresIn(jwtTokenProvider.getExpireTime() / 1000);
         
         return loginVO;
     }

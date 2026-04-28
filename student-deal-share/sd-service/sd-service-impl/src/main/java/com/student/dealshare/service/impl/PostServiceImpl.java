@@ -9,11 +9,13 @@ import com.student.dealshare.converter.PostConverter;
 import com.student.dealshare.mapper.LikeRecordMapper;
 import com.student.dealshare.mapper.PostMapper;
 import com.student.dealshare.mapper.PostTopicMapper;
+import com.student.dealshare.mapper.UserMapper;
 import com.student.dealshare.model.dto.PostCreateDTO;
 import com.student.dealshare.model.dto.PostUpdateDTO;
 import com.student.dealshare.model.entity.LikeRecord;
 import com.student.dealshare.model.entity.Post;
 import com.student.dealshare.model.entity.PostTopic;
+import com.student.dealshare.model.entity.User;
 import com.student.dealshare.model.vo.PostVO;
 import com.student.dealshare.security.SecurityUtils;
 import com.student.dealshare.service.api.PostService;
@@ -34,6 +36,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     private final LikeRecordMapper likeRecordMapper;
     private final PostTopicMapper postTopicMapper;
     private final PostConverter postConverter;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -81,7 +84,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
                .orderByDesc(Post::getCreatedAt);
         
         Page<Post> result = postMapper.selectPage(postPage, wrapper);
-        return (Page<PostVO>) result.convert(postConverter::toVO);
+        return (Page<PostVO>) result.convert(this::buildPostVOWithAuthor);
     }
 
     @Override
@@ -197,7 +200,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         
         List<Post> posts = postMapper.selectList(wrapper);
         return posts.stream()
-                .map(postConverter::toVO)
+                .map(this::buildPostVOWithAuthor)
                 .collect(Collectors.toList());
     }
 
@@ -211,7 +214,23 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         
         List<Post> posts = postMapper.selectList(wrapper);
         return posts.stream()
-                .map(postConverter::toVO)
+                .map(this::buildPostVOWithAuthor)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 构建 PostVO 并填充作者信息
+     */
+    private PostVO buildPostVOWithAuthor(Post post) {
+        PostVO vo = postConverter.toVO(post);
+        
+        // 查询作者信息
+        User author = userMapper.selectById(post.getUserId());
+        if (author != null) {
+            vo.setAuthorName(author.getNickname());
+            vo.setAuthorAvatar(author.getAvatar());
+        }
+        
+        return vo;
     }
 }

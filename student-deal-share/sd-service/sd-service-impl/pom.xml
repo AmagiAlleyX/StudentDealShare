@@ -8,6 +8,7 @@
         <groupId>com.student.dealshare</groupId>
         <artifactId>student-deal-share</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>sd-service-impl</artifactId>

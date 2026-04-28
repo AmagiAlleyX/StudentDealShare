@@ -73,9 +73,13 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { User, Lock } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
+import { authService } from '@/api/auth'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 const formRef = ref<FormInstance>()
 const loading = ref(false)
 
@@ -99,16 +103,34 @@ const rules: FormRules = {
 const handleLogin = async () => {
   if (!formRef.value) return
   
-  await formRef.value.validate((valid) => {
+  await formRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
-      // TODO: 调用后端登录接口
-      setTimeout(() => {
+      try {
+        const response = await authService.login({
+          username: loginForm.username,
+          password: loginForm.password,
+        })
+        
+        const { token, expireTime, userInfo } = response.data.data
+        
+        // 使用 userStore 保存登录信息
+        userStore.setLoginInfo(token, expireTime, userInfo)
+        
+        ElMessage.success('登录成功')
+        
+        // 延迟一下再跳转，让用户看到成功提示
+        setTimeout(() => {
+          // 获取 URL 中的 redirect 参数
+          const redirect = router.currentRoute.value.query.redirect
+          router.push(redirect ? decodeURIComponent(redirect as string) : '/')
+        }, 500)
+      } catch (error: any) {
+        console.error('登录失败:', error)
+        // 错误消息已经在 request.ts 中处理
+      } finally {
         loading.value = false
-        console.log('登录信息', loginForm)
-        // 登录成功后跳转到首页
-        router.push('/')
-      }, 1500)
+      }
     }
   })
 }

@@ -81,24 +81,31 @@ INSERT INTO t_post (title, content, user_id, category_id, image_urls, video_urls
 ('毕业设计选题求建议', '计算机专业，不知道选什么题目好，求学长学姐给点建议', 2, 2, NULL, NULL, '毕业设计，求助', 3, 1, 789, 123, 89, 56, 34, 0, 0, NOW(), NOW(), 0);
 
 -- ============================================
--- 6. 评论表 (t_comment) - 15 条数据
+-- 6. 评论表 (t_comment) - 20 条数据
 -- ============================================
 INSERT INTO t_comment (user_id, target_type, target_id, parent_id, reply_user_id, content, image_urls, like_count, status, created_at, updated_at, deleted) VALUES
-(2, 1, 1, NULL, NULL, '感谢学长分享，很有用！', NULL, 23, 1, NOW(), NOW(), 0),
-(3, 1, 1, NULL, NULL, '已收藏，准备考研了', NULL, 15, 1, NOW(), NOW(), 0),
+-- 优惠评论 (target_type=1)
+(2, 1, 1, 0, NULL, '感谢学长分享，很有用！', NULL, 23, 1, NOW(), NOW(), 0),
+(3, 1, 1, 0, NULL, '已收藏，准备考研了', NULL, 15, 1, NOW(), NOW(), 0),
 (4, 1, 1, 1, 2, '回复 1 楼：一起加油！', NULL, 8, 1, NOW(), NOW(), 0),
-(5, 1, 2, NULL, NULL, '这家店确实不错，我经常去', NULL, 12, 1, NOW(), NOW(), 0),
-(6, 1, 2, NULL, NULL, '求地址！', NULL, 5, 1, NOW(), NOW(), 0),
+(5, 1, 2, 0, NULL, '这家店确实不错，我经常去', NULL, 12, 1, NOW(), NOW(), 0),
+(6, 1, 2, 0, NULL, '求地址！', NULL, 5, 1, NOW(), NOW(), 0),
 (7, 1, 2, 5, 5, '地址在学校东门旁边', NULL, 3, 1, NOW(), NOW(), 0),
-(8, 1, 3, NULL, NULL, '还有吗？我也想要', NULL, 18, 1, NOW(), NOW(), 0),
-(1, 1, 3, NULL, NULL, '可以私聊吗？', NULL, 7, 1, NOW(), NOW(), 0),
-(2, 1, 4, NULL, NULL, '拍得真好看！', NULL, 25, 1, NOW(), NOW(), 0),
-(3, 1, 4, NULL, NULL, '这是什么相机拍的？', NULL, 9, 1, NOW(), NOW(), 0),
-(4, 1, 4, 9, 2, '用的是索尼 A7M3', NULL, 4, 1, NOW(), NOW(), 0),
-(5, 1, 5, NULL, NULL, '我来帮你看看', NULL, 11, 1, NOW(), NOW(), 0),
-(6, 1, 5, 11, 5, '谢谢！', NULL, 2, 1, NOW(), NOW(), 0),
-(7, 1, 6, NULL, NULL, '已经报名了，期待面试', NULL, 16, 1, NOW(), NOW(), 0),
-(8, 1, 6, NULL, NULL, '有什么要求吗？', NULL, 6, 1, NOW(), NOW(), 0);
+(8, 1, 3, 0, NULL, '还有吗？我也想要', NULL, 18, 1, NOW(), NOW(), 0),
+(1, 1, 3, 0, NULL, '可以私聊吗？', NULL, 7, 1, NOW(), NOW(), 0),
+-- 帖子评论 (target_type=2)
+(2, 2, 1, 0, NULL, '学长学姐好，求更多考研资料！', 'comment_post1_1.jpg', 15, 1, NOW(), NOW(), 0),
+(3, 2, 1, 0, NULL, '感谢分享，受益匪浅', NULL, 8, 1, NOW(), NOW(), 0),
+(4, 2, 1, 9, 2, '回复 2 楼：我这里有电子版，可以发你', NULL, 5, 1, NOW(), NOW(), 0),
+(5, 2, 2, 0, NULL, '这家店我也去过，确实不错！', 'comment_post2_1.jpg,comment_post2_2.jpg', 12, 1, NOW(), NOW(), 0),
+(6, 2, 2, 0, NULL, '求具体位置', NULL, 3, 1, NOW(), NOW(), 0),
+(7, 2, 2, 12, 5, '在学校东门商业街二楼', NULL, 2, 1, NOW(), NOW(), 0),
+(8, 2, 3, 0, NULL, '二手交易要注意安全啊', NULL, 6, 1, NOW(), NOW(), 0),
+(1, 2, 3, 0, NULL, '支持面交', NULL, 4, 1, NOW(), NOW(), 0),
+(2, 2, 4, 0, NULL, '拍得真好看！求教摄影技巧', NULL, 18, 1, NOW(), NOW(), 0),
+(3, 2, 4, 0, NULL, '这是什么相机拍的？', NULL, 9, 1, NOW(), NOW(), 0),
+(4, 2, 4, 17, 12, '用的是索尼 A7M3', NULL, 7, 1, NOW(), NOW(), 0),
+(5, 2, 9, 0, NULL, '这周末下午 2 点，学校篮球场见', NULL, 11, 1, NOW(), NOW(), 0);
 
 -- ============================================
 -- 7. 话题表 (t_topic) - 6 条数据

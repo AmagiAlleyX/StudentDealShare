@@ -105,7 +105,9 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { User, Lock, Message, Phone } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
+import { authService } from '@/api/auth'
 
 const router = useRouter()
 const formRef = ref<FormInstance>()
@@ -153,21 +155,34 @@ const rules: FormRules = {
 const handleRegister = async () => {
   if (!formRef.value) return
   
-  await formRef.value.validate((valid) => {
+  await formRef.value.validate(async (valid) => {
     if (valid) {
       if (!registerForm.agree) {
-        alert('请先同意用户协议和隐私政策')
+        ElMessage.warning('请先同意用户协议和隐私政策')
         return
       }
       
       loading.value = true
-      // TODO: 调用后端注册接口
-      setTimeout(() => {
-        loading.value = false
-        console.log('注册信息', registerForm)
+      try {
+        await authService.register({
+          username: registerForm.username,
+          email: registerForm.email,
+          phone: registerForm.phone,
+          password: registerForm.password,
+        })
+        
+        ElMessage.success('注册成功，请登录')
+        
         // 注册成功后跳转到登录页
-        router.push('/login')
-      }, 1500)
+        setTimeout(() => {
+          router.push('/login')
+        }, 500)
+      } catch (error: any) {
+        console.error('注册失败:', error)
+        // 错误消息已经在 request.ts 中处理
+      } finally {
+        loading.value = false
+      }
     }
   })
 }

@@ -7,11 +7,12 @@
           <div class="sidebar-card">
             <h3 class="sidebar-title">分类</h3>
             <ul class="category-list">
-              <li v-for="cat in categories" :key="cat.id" class="category-item">
-                <router-link :to="`/category/${cat.id}`" class="category-link">
-                  <span class="category-icon">{{ cat.icon }}</span>
+              <li v-for="cat in categories" :key="cat.categoryId || cat.id" class="category-item">
+                <router-link :to="`/category/${cat.categoryId || cat.id}`" class="category-link">
+                  <el-icon class="category-icon">
+                    <component :is="getCategoryIcon(cat.name)" />
+                  </el-icon>
                   <span class="category-name">{{ cat.name }}</span>
-                  <span class="category-count">{{ cat.count }}</span>
                 </router-link>
               </li>
             </ul>
@@ -112,19 +113,41 @@
         <aside class="sidebar-right">
           <!-- 用户卡片 -->
           <div class="sidebar-card user-card">
-            <div class="user-header">
-              <el-avatar :size="60">学</el-avatar>
-              <h4>欢迎来到资源分享平台</h4>
-              <p>登录后体验完整功能</p>
-            </div>
-            <div class="user-actions">
-              <router-link to="/login" class="login-btn-wrapper">
-                <el-button type="primary" class="login-btn">登录</el-button>
-              </router-link>
-              <router-link to="/register" class="register-btn-wrapper">
-                <el-button class="register-btn">注册</el-button>
-              </router-link>
-            </div>
+            <!-- 未登录状态 -->
+            <template v-if="!userStore.isLoggedIn">
+              <div class="user-header">
+                <el-avatar :size="60">学</el-avatar>
+                <h4>欢迎来到资源分享平台</h4>
+                <p>登录后体验完整功能</p>
+              </div>
+              <div class="user-actions">
+                <router-link to="/login" class="action-btn-wrapper">
+                  <el-button type="primary" class="action-btn-item">登录</el-button>
+                </router-link>
+                <router-link to="/register" class="action-btn-wrapper">
+                  <el-button class="action-btn-item">注册</el-button>
+                </router-link>
+              </div>
+            </template>
+
+            <!-- 已登录状态 -->
+            <template v-else>
+              <div class="user-header">
+                <el-avatar :size="60" :src="userStore.userInfo?.avatar || ''">
+                  {{ userStore.userInfo?.nickname?.charAt(0) || userStore.userInfo?.username?.charAt(0) || '学' }}
+                </el-avatar>
+                <h4>{{ userStore.userInfo?.nickname || userStore.userInfo?.username }}</h4>
+                <p>{{ userStore.userInfo?.school || '暂未填写学校' }}</p>
+              </div>
+              <div class="user-actions">
+                <router-link to="/profile" class="action-btn-wrapper">
+                  <el-button type="primary" class="action-btn-item">个人中心</el-button>
+                </router-link>
+                <div class="action-btn-wrapper">
+                  <el-button class="action-btn-item" @click="handleLogout">退出登录</el-button>
+                </div>
+              </div>
+            </template>
           </div>
 
           <!-- 热门优惠 -->
@@ -140,32 +163,21 @@
             </ul>
           </div>
 
-          <!-- 活跃用户 -->
-          <div class="sidebar-card">
-            <h3 class="sidebar-title">活跃用户</h3>
-            <ul class="active-users">
-              <li v-for="user in activeUsers" :key="user.id" class="active-user-item">
-                <el-avatar :size="36">{{ user.nickname?.charAt(0) }}</el-avatar>
-                <span class="user-nickname">{{ user.nickname }}</span>
-              </li>
-            </ul>
-          </div>
-
           <!-- 平台统计 -->
           <div class="sidebar-card">
             <h3 class="sidebar-title">平台统计</h3>
             <div class="platform-stats">
               <div class="stat-row">
                 <span>帖子总数</span>
-                <span class="stat-value">1,234</span>
+                <span class="stat-value">{{ formatNumber(platformStats.postCount) }}</span>
               </div>
               <div class="stat-row">
                 <span>优惠信息</span>
-                <span class="stat-value">567</span>
+                <span class="stat-value">{{ formatNumber(platformStats.dealCount) }}</span>
               </div>
               <div class="stat-row">
                 <span>注册用户</span>
-                <span class="stat-value">2,890</span>
+                <span class="stat-value">{{ formatNumber(platformStats.userCount) }}</span>
               </div>
             </div>
           </div>
@@ -216,95 +228,73 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import request from '@/utils/request'
+// 类型定义
+interface Category {
+  categoryId?: number
+  id?: number
+  name: string
+  icon?: string
+  count?: number
+}
+
+interface Post {
+  id: number
+  title: string
+  content: string
+  authorName: string
+  authorAvatar?: string
+  viewCount: number
+  commentCount: number
+  favoriteCount: number
+  likeCount: number
+  top?: number
+  essence?: number
+  createdAt: string
+}
+
+interface Deal {
+  id: number
+  title: string
+  price: number
+}
+
+// 分类图标映射
+const categoryIcons: Record<string, string> = {
+  '学习资料': 'ReadingLamp',
+  '生活分享': 'Star',
+  '求职招聘': 'Briefcase',
+  '二手交易': 'Refresh',
+  '活动信息': 'Celebration',
+  '技术问题': 'Monitor',
+  '优惠': 'ShoppingBag',
+  '帖子': 'Document',
+}
+
+
+
+const userStore = useUserStore()
+const router = useRouter()
 
 const activeTab = ref('latest')
 const loading = ref(false)
 const showCreateDialog = ref(false)
 const showDealDialog = ref(false)
 
-const categories = ref([
-  { id: 1, name: '学习资料', icon: '📖', count: 156 },
-  { id: 2, name: '生活分享', icon: '🌟', count: 234 },
-  { id: 3, name: '求职招聘', icon: '💼', count: 89 },
-  { id: 4, name: '二手交易', icon: '🔄', count: 312 },
-  { id: 5, name: '活动信息', icon: '🎉', count: 67 },
-  { id: 6, name: '技术问题', icon: '💻', count: 445 },
-])
+const categories = ref<Category[]>([])
+const posts = ref<Post[]>([])
+const hotDeals = ref<Deal[]>([])
 
-const posts = ref([
-  {
-    id: 1,
-    title: '2024年考研资料分享，包含数学、英语、政治等科目',
-    content: '整理了近三年的考研真题和解析，还有一些复习笔记，希望对大家有帮助。包含数学一、数学二、英语一、英语二、政治等科目的复习资料。',
-    authorName: '学霸小明',
-    authorAvatar: '',
-    createdAt: '2024-01-15 10:30:00',
-    viewCount: 1234,
-    commentCount: 45,
-    favoriteCount: 89,
-    likeCount: 156,
-    top: 1,
-    essence: 1,
-  },
-  {
-    id: 2,
-    title: '校园周边美食推荐，学生党必看！',
-    content: '学校周边开了很多新餐厅，我去尝试了几家，给大家整理了一份美食攻略。包括价格、口味、环境等详细信息。',
-    authorName: '吃货小红',
-    authorAvatar: '',
-    createdAt: '2024-01-15 09:15:00',
-    viewCount: 892,
-    commentCount: 67,
-    favoriteCount: 123,
-    likeCount: 234,
-    top: 0,
-    essence: 0,
-  },
-  {
-    id: 3,
-    title: 'Java 后端开发学习路线分享',
-    content: '从零基础到能独立开发项目，分享一下我的学习经历。包括需要掌握的技术栈、推荐的学习资源、项目实践建议等。',
-    authorName: '程序猿小李',
-    authorAvatar: '',
-    createdAt: '2024-01-14 20:45:00',
-    viewCount: 2345,
-    commentCount: 89,
-    favoriteCount: 234,
-    likeCount: 456,
-    top: 0,
-    essence: 1,
-  },
-  {
-    id: 4,
-    title: '闲置书籍出售，计算机类教材低价出',
-    content: '毕业清理宿舍，有一些计算机专业的教材和参考书，包括《算法导论》、《深入理解计算机系统》等，价格优惠。',
-    authorName: '毕业生小王',
-    authorAvatar: '',
-    createdAt: '2024-01-14 16:20:00',
-    viewCount: 456,
-    commentCount: 23,
-    favoriteCount: 34,
-    likeCount: 45,
-    top: 0,
-    essence: 0,
-  },
-])
-
-const hotDeals = ref([
-  { id: 1, title: '亚马逊学生会员半价优惠', price: 49 },
-  { id: 2, title: '京东学生专享优惠券', price: 0 },
-  { id: 3, title: 'Apple 教育优惠', price: 7999 },
-  { id: 4, title: 'Microsoft 365 学生版', price: 298 },
-])
-
-const activeUsers = ref([
-  { id: 1, nickname: '学霸小明' },
-  { id: 2, nickname: '吃货小红' },
-  { id: 3, nickname: '程序猿小李' },
-  { id: 4, nickname: '设计师小张' },
-  { id: 5, nickname: '摄影师小刘' },
-])
+// 平台统计数据
+const platformStats = ref({
+  postCount: 0,
+  dealCount: 0,
+  userCount: 0,
+})
 
 const newPost = ref({
   title: '',
@@ -353,8 +343,182 @@ function handleCreateDeal() {
   showDealDialog.value = false
 }
 
+function handleLogout() {
+  userStore.logout()
+  ElMessage.success('退出登录成功')
+  router.push('/')
+}
+
+function getCategoryIcon(categoryName: string): string {
+  // 根据分类名称匹配图标
+  for (const [key, iconName] of Object.entries(categoryIcons)) {
+    if (categoryName.includes(key)) {
+      return iconName
+    }
+  }
+  // 默认返回 Document 图标
+  return 'Document'
+}
+
+function formatNumber(num: number): string {
+  if (num >= 10000) {
+    return (num / 10000).toFixed(1) + 'w'
+  }
+  return num.toLocaleString()
+}
+
+async function loadPlatformStats() {
+  try {
+    // 通过统计帖子和优惠数量来获取平台统计数据
+    const [postRes, dealRes] = await Promise.all([
+      request.get('/api/post/page', { params: { page: 1, size: 1 } }),
+      request.get('/api/deal/page', { params: { page: 1, size: 1 } })
+    ])
+    
+    platformStats.value = {
+      postCount: postRes.data.data?.total || 0,
+      dealCount: dealRes.data.data?.total || 0,
+      userCount: 0, // 暂时无法获取用户总数
+    }
+  } catch (error) {
+    console.error('加载平台统计失败:', error)
+    platformStats.value = {
+      postCount: 0,
+      dealCount: 0,
+      userCount: 0,
+    }
+  }
+}
+
+async function loadCategories() {
+  try {
+    console.log('请求分类数据...')
+    const response = await request.get('/api/category/list')
+    console.log('分类响应数据:', response.data)
+    if (response.data && Array.isArray(response.data.data)) {
+      categories.value = response.data.data
+      console.log('分类数据加载成功:', categories.value.length, '个分类')
+    } else {
+      // 加载失败时使用默认分类
+      console.warn('分类响应数据结构异常，使用默认分类')
+      categories.value = [
+        { categoryId: 1, name: '学习资料' },
+        { categoryId: 2, name: '生活分享' },
+        { categoryId: 3, name: '求职招聘' },
+        { categoryId: 4, name: '二手交易' },
+        { categoryId: 5, name: '活动信息' },
+        { categoryId: 6, name: '技术问题' },
+      ]
+    }
+  } catch (error) {
+    console.error('加载分类失败:', error)
+    categories.value = []
+  }
+}
+
+async function loadPosts() {
+  try {
+    loading.value = true
+    let response
+    let url = '/api/post/page'
+    let params: any = {}
+    
+    if (activeTab.value === 'latest') {
+      // 最新帖子：按创建时间倒序
+      params = { page: 1, size: 20 }
+    } else if (activeTab.value === 'hot') {
+      // 热门帖子
+      url = '/api/post/hot'
+      params = { limit: 20 }
+    } else if (activeTab.value === 'essence') {
+      // 精华帖子
+      url = '/api/post/essence'
+      params = { limit: 20 }
+    } else {
+      params = { page: 1, size: 20 }
+    }
+    
+    console.log('请求帖子数据，URL:', url, '参数:', params)
+    response = await request.get(url, { params })
+    console.log('帖子响应数据:', response.data)
+    
+    if (response?.data?.data) {
+      let dataList = []
+      const responseData = response.data.data
+      
+      // 判断响应数据结构
+      if (Array.isArray(responseData)) {
+        // 直接返回数组
+        dataList = responseData
+      } else if (responseData.records && Array.isArray(responseData.records)) {
+        // MyBatis-Plus 分页响应，取 records 字段
+        dataList = responseData.records
+        console.log('检测到分页响应，records 数量:', dataList.length)
+      } else if (responseData.list && Array.isArray(responseData.list)) {
+        // 其他分页响应，取 list 字段
+        dataList = responseData.list
+      }
+      
+      console.log('解析后的帖子列表:', dataList)
+      posts.value = dataList.map((post: any) => ({
+        id: post.id,
+        title: post.title,
+        content: post.content?.substring(0, 150) || '',
+        authorName: post.authorName || '匿名用户',
+        authorAvatar: post.authorAvatar || '',
+        createdAt: post.createdAt,
+        viewCount: post.viewCount || 0,
+        commentCount: post.commentCount || 0,
+        favoriteCount: post.favoriteCount || 0,
+        likeCount: post.likeCount || 0,
+        top: post.top || 0,
+        essence: post.essence || 0
+      }))
+      console.log('帖子数据加载成功:', posts.value.length, '个帖子')
+    } else {
+      console.warn('帖子响应数据结构异常:', response)
+      posts.value = []
+    }
+  } catch (error) {
+    console.error('加载帖子失败:', error)
+    posts.value = []
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadHotDeals() {
+  try {
+    console.log('请求热门优惠数据...')
+    const response = await request.get('/api/deal/hot', { params: { limit: 10 } })
+    console.log('热门优惠响应数据:', response.data)
+    if (response?.data?.data && Array.isArray(response.data.data)) {
+      hotDeals.value = response.data.data.map((deal: any) => ({
+        id: deal.id,
+        title: deal.title,
+        price: deal.price || deal.dealPrice || 0
+      }))
+      console.log('热门优惠加载成功:', hotDeals.value.length, '个优惠')
+    } else {
+      console.warn('热门优惠响应数据结构异常')
+      hotDeals.value = []
+    }
+  } catch (error) {
+    console.error('加载热门优惠失败:', error)
+    hotDeals.value = []
+  }
+}
+
+// 监听选项卡变化，重新加载帖子数据
+watch(activeTab, () => {
+  loadPosts()
+})
+
 onMounted(() => {
-  // 加载数据
+  loadCategories()
+  loadPosts()
+  loadHotDeals()
+  loadPlatformStats()
 })
 </script>
 
@@ -459,18 +623,22 @@ onMounted(() => {
 .quick-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  position: relative;
+  gap: 12px;
+  width: 100%;
 }
 
 .action-btn {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  position: relative;
-  overflow: hidden;
+  justify-content: flex-start;
+  gap: 12px;
+  height: 48px;
+  padding: 0 24px;
+  box-sizing: border-box;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 8px;
 }
 
 /* 主内容区 */
@@ -666,39 +834,40 @@ onMounted(() => {
   gap: 8px;
 }
 
-.login-btn-wrapper,
-.register-btn-wrapper {
+.action-btn-wrapper {
   flex: 1;
-  text-decoration: none;
 }
 
-.login-btn, .register-btn {
+.action-btn-item {
   width: 100%;
   font-weight: 600;
   border: 2px solid var(--border-color);
   transition: all 0.3s ease;
+  height: 40px;
+  padding: 0 16px;
+  box-sizing: border-box;
 }
 
-.login-btn {
+.action-btn-item[type="primary"] {
   background-color: var(--accent-color);
   color: #ffffff;
   border-color: var(--accent-color);
 }
 
-.login-btn:hover {
+.action-btn-item[type="primary"]:hover {
   background-color: var(--accent-hover);
   border-color: var(--accent-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-.register-btn {
+.action-btn-item:not([type="primary"]) {
   background-color: transparent;
   color: var(--text-primary);
   border-color: var(--text-primary);
 }
 
-.register-btn:hover {
+.action-btn-item:not([type="primary"]):hover {
   background-color: var(--text-primary);
   color: var(--bg-primary);
   transform: translateY(-2px);

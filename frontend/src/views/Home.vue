@@ -118,8 +118,12 @@
               <p>登录后体验完整功能</p>
             </div>
             <div class="user-actions">
-              <el-button type="primary" class="login-btn">登录</el-button>
-              <el-button class="register-btn">注册</el-button>
+              <router-link to="/login" class="login-btn-wrapper">
+                <el-button type="primary" class="login-btn">登录</el-button>
+              </router-link>
+              <router-link to="/register" class="register-btn-wrapper">
+                <el-button class="register-btn">注册</el-button>
+              </router-link>
             </div>
           </div>
 
@@ -456,10 +460,17 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
 }
 
 .action-btn {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
 }
 
 /* 主内容区 */
@@ -477,6 +488,20 @@ onMounted(() => {
 
 .tabs :deep(.el-tabs__header) {
   margin-bottom: 0;
+}
+
+.tabs :deep(.el-tabs__item) {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.tabs :deep(.el-tabs__item.is-active) {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.tabs :deep(.el-tabs__active-bar) {
+  background-color: var(--accent-color);
 }
 
 .post-list {
@@ -523,14 +548,18 @@ onMounted(() => {
   gap: 6px;
 }
 
-.tag-top {
-  background-color: var(--error-color);
-  color: #ffffff;
+.tag-top,
+.tag-essence {
+  background-color: var(--tag-top-bg);
+  color: var(--tag-text);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .tag-essence {
-  background-color: var(--success-color);
-  color: #ffffff;
+  background-color: var(--tag-essence-bg);
 }
 
 .post-body {
@@ -570,15 +599,29 @@ onMounted(() => {
 
 .post-stats {
   display: flex;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .stat-item {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-tertiary);
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+@media (max-width: 768px) {
+  .stat-item {
+    font-size: 11px;
+    gap: 2px;
+  }
+  
+  .post-stats {
+    gap: 8px;
+  }
 }
 
 .post-actions {
@@ -623,8 +666,43 @@ onMounted(() => {
   gap: 8px;
 }
 
-.login-btn, .register-btn {
+.login-btn-wrapper,
+.register-btn-wrapper {
   flex: 1;
+  text-decoration: none;
+}
+
+.login-btn, .register-btn {
+  width: 100%;
+  font-weight: 600;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+.login-btn:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.register-btn {
+  background-color: transparent;
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.register-btn:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .hot-deals {

@@ -37,7 +37,7 @@ public class PostController {
 
     @Operation(summary = "获取帖子详情")
     @GetMapping("/{id}")
-    public R<PostVO> getPostById(@PathVariable Long id) {
+    public R<PostVO> getPostById(@PathVariable("id") Long id) {
         postService.incrementViewCount(id);
         PostVO result = postService.getPostById(id);
         return R.ok(result);
@@ -46,8 +46,8 @@ public class PostController {
     @Operation(summary = "分页查询帖子")
     @GetMapping("/page")
     public R<Page<PostVO>> pagePosts(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         Page<PostVO> postPage = postService.pagePosts(page, size);
         return R.ok(postPage);
     }
@@ -63,7 +63,7 @@ public class PostController {
     @Operation(summary = "删除帖子")
     @DeleteMapping("/{id}")
     @OperationLog(module = "社区管理", type = "DELETE", description = "删除帖子")
-    public R<Void> deletePost(@PathVariable Long id) {
+    public R<Void> deletePost(@PathVariable("id") Long id) {
         postService.deletePost(id);
         return R.ok();
     }
@@ -71,7 +71,7 @@ public class PostController {
     @Operation(summary = "点赞帖子")
     @PostMapping("/like/{id}")
     @OperationLog(module = "社区管理", type = "LIKE", description = "点赞帖子")
-    public R<Void> likePost(@PathVariable Long id) {
+    public R<Void> likePost(@PathVariable("id") Long id) {
         postService.likePost(id);
         return R.ok();
     }
@@ -79,14 +79,14 @@ public class PostController {
     @Operation(summary = "取消点赞")
     @DeleteMapping("/like/{id}")
     @OperationLog(module = "社区管理", type = "UNLIKE", description = "取消点赞")
-    public R<Void> unlikePost(@PathVariable Long id) {
+    public R<Void> unlikePost(@PathVariable("id") Long id) {
         postService.unlikePost(id);
         return R.ok();
     }
 
     @Operation(summary = "检查是否已点赞")
     @GetMapping("/like/check/{id}")
-    public R<Boolean> isLiked(@PathVariable Long id) {
+    public R<Boolean> isLiked(@PathVariable("id") Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
         boolean liked = postService.isLiked(userId, id);
         return R.ok(liked);
@@ -95,23 +95,24 @@ public class PostController {
     @Operation(summary = "查询用户发布的帖子")
     @GetMapping("/user/{userId}/page")
     public R<Page<PostVO>> pageUserPosts(
-            @PathVariable Long userId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("userId") Long userId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         Page<PostVO> postPage = postService.pageUserPosts(userId, page, size);
         return R.ok(postPage);
     }
 
+
     @Operation(summary = "热门帖子列表")
     @GetMapping("/hot")
-    public R<List<PostVO>> listHotPosts(@RequestParam(defaultValue = "10") int limit) {
+    public R<List<PostVO>> listHotPosts(@RequestParam(value = "limit", defaultValue = "10") int limit) {
         List<PostVO> list = postService.listHotPosts(limit);
         return R.ok(list);
     }
 
     @Operation(summary = "精华帖子列表")
     @GetMapping("/essence")
-    public R<List<PostVO>> listEssencePosts(@RequestParam(defaultValue = "10") int limit) {
+    public R<List<PostVO>> listEssencePosts(@RequestParam(value = "limit", defaultValue = "10") int limit) {
         List<PostVO> list = postService.listEssencePosts(limit);
         return R.ok(list);
     }

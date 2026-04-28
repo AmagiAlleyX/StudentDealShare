@@ -152,12 +152,28 @@ onUnmounted(() => {
 
 .nav-menu {
   display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px;
+  box-shadow: var(--shadow-md);
+  flex-direction: column;
+  gap: 8px;
 }
 
 @media (min-width: 768px) {
   .nav-menu {
     display: flex;
     gap: 4px;
+    position: static;
+    flex-direction: row;
+    background-color: transparent;
+    border-bottom: none;
+    padding: 0;
+    box-shadow: none;
   }
 }
 
@@ -165,11 +181,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border-radius: 6px;
   color: var(--text-secondary);
   font-size: 14px;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .nav-item:hover {
@@ -179,7 +196,8 @@ onUnmounted(() => {
 
 .nav-item.active {
   background-color: var(--active-bg);
-  color: var(--text-primary);
+  color: var(--accent-color);
+  font-weight: 600;
 }
 
 .header-right {
@@ -255,18 +273,9 @@ onUnmounted(() => {
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (max-width: 767px) {
   .nav-mobile-open {
     display: flex !important;
-    position: absolute;
-    top: 64px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    background-color: var(--header-bg);
-    border-bottom: 1px solid var(--border-color);
-    padding: 12px;
-    box-shadow: var(--shadow-md);
   }
 }
 </style>

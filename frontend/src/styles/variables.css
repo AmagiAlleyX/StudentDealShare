@@ -1,55 +1,79 @@
 :root[data-theme="light"] {
+  /* 黑白主色调 */
   --bg-primary: #ffffff;
-  --bg-secondary: #f5f5f5;
-  --bg-tertiary: #e5e5e5;
-  --text-primary: #1a1a1a;
-  --text-secondary: #666666;
-  --text-tertiary: #999999;
+  --bg-secondary: #f8f8f8;
+  --bg-tertiary: #e8e8e8;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-tertiary: #666666;
   --border-color: #e0e0e0;
-  --border-hover: #cccccc;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --border-hover: #999999;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.16);
   --hover-bg: #f0f0f0;
-  --active-bg: #e8e8e8;
-  --accent-color: #333333;
-  --accent-hover: #555555;
+  --active-bg: #e0e0e0;
+  
+  /* 强调色 - 蓝色 */
+  --accent-color: #2196f3;
+  --accent-hover: #1976d2;
+  
+  /* 功能色 */
   --success-color: #4caf50;
   --warning-color: #ff9800;
   --error-color: #f44336;
   --info-color: #2196f3;
+  
+  /* 组件背景 */
   --card-bg: #ffffff;
   --header-bg: #ffffff;
-  --sidebar-bg: #f8f8f8;
+  --sidebar-bg: #fafafa;
   --input-bg: #ffffff;
-  --tag-bg: #f0f0f0;
+  --tag-bg: #e3f2fd;
   --overlay-bg: rgba(0, 0, 0, 0.5);
+  
+  /* 标签颜色 */
+  --tag-top-bg: #2196f3;
+  --tag-essence-bg: #1976d2;
+  --tag-text: #ffffff;
 }
 
 :root[data-theme="dark"] {
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #2d2d2d;
-  --bg-tertiary: #3d3d3d;
-  --text-primary: #e0e0e0;
-  --text-secondary: #b0b0b0;
-  --text-tertiary: #808080;
-  --border-color: #3d3d3d;
-  --border-hover: #555555;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
-  --hover-bg: #333333;
-  --active-bg: #3d3d3d;
-  --accent-color: #e0e0e0;
-  --accent-hover: #ffffff;
-  --success-color: #66bb6a;
-  --warning-color: #ffa726;
-  --error-color: #ef5350;
-  --info-color: #42a5f5;
-  --card-bg: #2d2d2d;
-  --header-bg: #1a1a1a;
-  --sidebar-bg: #252525;
-  --input-bg: #2d2d2d;
-  --tag-bg: #3d3d3d;
+  /* 黑白主色调 */
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2c2c2c;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-tertiary: #999999;
+  --border-color: #333333;
+  --border-hover: #666666;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.6);
+  --hover-bg: #2a2a2a;
+  --active-bg: #333333;
+  
+  /* 强调色 - 蓝色 */
+  --accent-color: #64b5f6;
+  --accent-hover: #42a5f5;
+  
+  /* 功能色 */
+  --success-color: #81c784;
+  --warning-color: #ffb74d;
+  --error-color: #e57373;
+  --info-color: #64b5f6;
+  
+  /* 组件背景 */
+  --card-bg: #1e1e1e;
+  --header-bg: #121212;
+  --sidebar-bg: #1a1a1a;
+  --input-bg: #2c2c2c;
+  --tag-bg: #1565c0;
   --overlay-bg: rgba(0, 0, 0, 0.7);
+  
+  /* 标签颜色 */
+  --tag-top-bg: #42a5f5;
+  --tag-essence-bg: #2196f3;
+  --tag-text: #ffffff;
 }

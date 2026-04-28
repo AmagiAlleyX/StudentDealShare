@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -139,27 +140,37 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
     @Transactional(rollbackFor = Exception.class)
     public void favoriteDeal(Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
-        
-        LambdaQueryWrapper<UserFavorite> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFavorite::getUserId, userId)
-               .eq(UserFavorite::getTargetType, 1)
-               .eq(UserFavorite::getTargetId, id);
-        
-        UserFavorite exist = userFavoriteMapper.selectOne(wrapper);
+
+        // 查询包含软删除的历史记录
+        UserFavorite exist = userFavoriteMapper.selectIgnoreLogicDel(userId, 1, id);
+
         if (exist != null) {
-            throw new BusinessException(ResultCodeEnum.ALREADY_FAVORITED);
+            if (exist.getDeleted() == 0) {
+                // 当前已是收藏状态，幂等拦截
+                log.info("用户已收藏，无需重复操作，userId: {}, targetId: {}", userId, id);
+                throw new BusinessException(5008, "您已经收藏过该内容");
+            }
+            // ✅ 用自定义 update，绕过 @TableLogic 的 AND deleted=0 限制
+            int rows = userFavoriteMapper.updateIgnoreLogicDel(exist.getId(), 0, LocalDateTime.now());
+            if (rows == 0) {
+                // 更新失败兜底保护，不继续累加收藏数
+                throw new BusinessException("收藏操作失败，请重试");
+            }
+        } else {
+            // 全新记录
+            UserFavorite favorite = new UserFavorite();
+            favorite.setUserId(userId);
+            favorite.setTargetType(1);
+            favorite.setTargetId(id);
+            userFavoriteMapper.insert(favorite);
         }
 
-        UserFavorite favorite = new UserFavorite();
-        favorite.setUserId(userId);
-        favorite.setTargetType(1);
-        favorite.setTargetId(id);
-        userFavoriteMapper.insert(favorite);
-
+        // 只有上面成功才会走到这里
         Deal deal = dealMapper.selectById(id);
-        deal.setFavoriteCount(deal.getFavoriteCount() + 1);
-        dealMapper.updateById(deal);
-        
+        if (deal != null) {
+            deal.setFavoriteCount(deal.getFavoriteCount() + 1);
+            dealMapper.updateById(deal);
+        }
         log.info("优惠收藏成功，dealId: {}, userId: {}", id, userId);
     }
 
@@ -168,19 +179,23 @@ public class DealServiceImpl extends ServiceImpl<DealMapper, Deal> implements De
     public void unfavoriteDeal(Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
 
-        LambdaQueryWrapper<UserFavorite> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserFavorite::getUserId, userId)
-               .eq(UserFavorite::getTargetType, 1)
-               .eq(UserFavorite::getTargetId, id);
-        userFavoriteMapper.delete(wrapper);
+        UserFavorite exist = userFavoriteMapper.selectIgnoreLogicDel(userId, 1, id);
 
-        Deal deal = dealMapper.selectById(id);
-        if (deal != null && deal.getFavoriteCount() > 0) {
-            deal.setFavoriteCount(deal.getFavoriteCount() - 1);
-            dealMapper.updateById(deal);
+        if (exist == null || exist.getDeleted() == 1) {
+            log.info("用户未收藏，无需操作，userId: {}, targetId: {}", userId, id);
+            return;
         }
-        
-        log.info("优惠取消收藏成功，dealId: {}, userId: {}", id, userId);
+
+        // ✅ 同样用自定义 update
+        int rows = userFavoriteMapper.updateIgnoreLogicDel(exist.getId(), 1, exist.getCreatedAt());
+        if (rows > 0) {
+            Deal deal = dealMapper.selectById(id);
+            if (deal != null && deal.getFavoriteCount() > 0) {
+                deal.setFavoriteCount(deal.getFavoriteCount() - 1);
+                dealMapper.updateById(deal);
+            }
+            log.info("优惠取消收藏成功，dealId: {}, userId: {}", id, userId);
+        }
     }
 
     @Override

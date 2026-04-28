@@ -37,8 +37,8 @@ public class CommentController {
     @Operation(summary = "查询帖子评论列表")
     @GetMapping("/post/{postId}")
     public R<List<CommentVO>> listCommentsByPost(
-            @PathVariable Long postId,
-            @RequestParam(defaultValue = "20") int limit) {
+            @PathVariable("postId") Long postId,
+            @RequestParam(value="limit", defaultValue = "20") int limit) {
         List<CommentVO> list = commentService.listCommentsByPost(postId, limit);
         return R.ok(list);
     }
@@ -46,9 +46,9 @@ public class CommentController {
     @Operation(summary = "分页查询评论")
     @GetMapping("/post/{postId}/page")
     public R<Page<CommentVO>> pageComments(
-            @PathVariable Long postId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("postId") Long postId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         Page<CommentVO> commentPage = (Page<CommentVO>) commentService.pageComments(postId, page, size);
         return R.ok(commentPage);
     }
@@ -56,7 +56,7 @@ public class CommentController {
     @Operation(summary = "删除评论")
     @DeleteMapping("/{id}")
     @OperationLog(module = "社区管理", type = "DELETE", description = "删除评论")
-    public R<Void> deleteComment(@PathVariable Long id) {
+    public R<Void> deleteComment(@PathVariable("id") Long id) {
         commentService.deleteComment(id);
         return R.ok();
     }
@@ -64,7 +64,7 @@ public class CommentController {
     @Operation(summary = "点赞评论")
     @PostMapping("/like/{id}")
     @OperationLog(module = "社区管理", type = "LIKE", description = "点赞评论")
-    public R<Void> likeComment(@PathVariable Long id) {
+    public R<Void> likeComment(@PathVariable("id") Long id) {
         commentService.likeComment(id);
         return R.ok();
     }
@@ -72,14 +72,14 @@ public class CommentController {
     @Operation(summary = "取消点赞评论")
     @DeleteMapping("/like/{id}")
     @OperationLog(module = "社区管理", type = "UNLIKE", description = "取消点赞评论")
-    public R<Void> unlikeComment(@PathVariable Long id) {
+    public R<Void> unlikeComment(@PathVariable("id") Long id) {
         commentService.unlikeComment(id);
         return R.ok();
     }
 
     @Operation(summary = "检查是否已点赞评论")
     @GetMapping("/like/check/{id}")
-    public R<Boolean> isLiked(@PathVariable Long id) {
+    public R<Boolean> isLiked(@PathVariable("id") Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
         boolean liked = commentService.isLiked(userId, id);
         return R.ok(liked);

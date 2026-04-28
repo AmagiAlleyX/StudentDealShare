@@ -69,7 +69,7 @@ CREATE TABLE t_user_favorite (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     deleted TINYINT DEFAULT 0 COMMENT '删除标识 0-未删除 1-已删除',
     PRIMARY KEY (id),
-    UNIQUE KEY uk_user_target (user_id, target_type, target_id),
+    UNIQUE KEY uk_user_target (user_id, target_type, target_id, deleted),
     KEY idx_target (target_type, target_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='用户收藏表';
 

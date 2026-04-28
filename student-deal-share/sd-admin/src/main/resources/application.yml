@@ -42,7 +42,7 @@ app:
 # JWT 配置
 jwt:
   secret: student-deal-share-secret-key-2024-for-jwt-token-generation
-  expire: 86400000
+  expire: 5184000000
 
 # MyBatis Plus 配置
 mybatis-plus:

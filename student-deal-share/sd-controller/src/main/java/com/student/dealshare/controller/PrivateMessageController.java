@@ -1,5 +1,4 @@
 package com.student.dealshare.controller;
-
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.student.dealshare.annotation.OperationLog;
 import com.student.dealshare.common.result.R;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 /**
  * 私信控制器
  */
@@ -36,9 +34,9 @@ public class PrivateMessageController {
     @Operation(summary = "查询会话消息列表")
     @GetMapping("/conversation/{otherUserId}")
     public R<Page<PrivateMessageVO>> pageMessages(
-            @PathVariable Long otherUserId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @PathVariable("otherUserId") Long otherUserId,
+            @RequestParam(value="page", defaultValue = "1") int page,
+            @RequestParam(value="size", defaultValue = "20") int size) {
         Long userId = SecurityUtils.getCurrentUserId();
         Page<PrivateMessageVO> messagePage = privateMessageService.pageMessages(userId, otherUserId, page, size);
         return R.ok(messagePage);
@@ -47,7 +45,7 @@ public class PrivateMessageController {
     @Operation(summary = "标记消息为已读")
     @PutMapping("/read/{id}")
     @OperationLog(module = "消息管理", type = "READ", description = "标记私信为已读")
-    public R<Void> markAsRead(@PathVariable Long id) {
+    public R<Void> markAsRead(@PathVariable("id") Long id) {
         privateMessageService.markAsRead(id);
         return R.ok();
     }
@@ -55,7 +53,7 @@ public class PrivateMessageController {
     @Operation(summary = "删除消息")
     @DeleteMapping("/{id}")
     @OperationLog(module = "消息管理", type = "DELETE", description = "删除私信")
-    public R<Void> deleteMessage(@PathVariable Long id) {
+    public R<Void> deleteMessage(@PathVariable("id") Long id) {
         Long userId = SecurityUtils.getCurrentUserId();
         privateMessageService.deleteMessage(id, userId);
         return R.ok();

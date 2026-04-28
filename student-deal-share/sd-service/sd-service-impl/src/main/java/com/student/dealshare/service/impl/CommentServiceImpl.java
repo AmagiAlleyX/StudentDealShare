@@ -111,7 +111,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         comment.setLikeCount(comment.getLikeCount() + 1);
         commentMapper.updateById(comment);
         
-        log.info("评论点赞成功，commentId: {}, userId: {}", id, userId);
+        log.info("评论点赞成功~，commentId: {}, userId: {}", id, userId);
     }
 
     @Override

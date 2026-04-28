@@ -34,8 +34,8 @@ public class NotificationController {
     @Operation(summary = "分页查询通知")
     @GetMapping("/page")
     public R<Page<NotificationVO>> pageNotifications(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(value="page", defaultValue = "1") int page,
+            @RequestParam(value="size", defaultValue = "10") int size) {
         Long userId = SecurityUtils.getCurrentUserId();
         Page<NotificationVO> notificationPage = notificationService.pageNotifications(userId, page, size);
         return R.ok(notificationPage);
@@ -44,7 +44,7 @@ public class NotificationController {
     @Operation(summary = "标记通知为已读")
     @PutMapping("/read/{id}")
     @OperationLog(module = "消息管理", type = "READ", description = "标记通知为已读")
-    public R<Void> markAsRead(@PathVariable Long id) {
+    public R<Void> markAsRead(@PathVariable("id") Long id) {
         notificationService.markAsRead(id);
         return R.ok();
     }
